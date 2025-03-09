@@ -1,3 +1,7 @@
+### Requirements
+
+- install `libircclient` with include files
+
 ### Usage
 
 ```sh
