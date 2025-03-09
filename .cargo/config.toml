@@ -1,0 +1,19 @@
+[build]
+# Uncomment if you want to compile static binary
+#target = "x86_64-unknown-linux-musl"
+rustflags = [
+  "-Clink-args=-lc",
+  "-Clink-args=-Wl,-rpath,$ORIGIN,-rpath,$ORIGIN/lib,-rpath,$ORIGIN/../lib",
+  "-Cpanic=abort",
+  "--verbose",
+]
+
+[target.x86_64-unknown-linux-musl]
+rustflags = [
+  "-Clink-args=-lc",
+  "-Clinker-plugin-lto",
+  "-Ctarget-feature=+crt-static",
+  "-Clink-arg=-fuse-ld=lld",
+  "-Crelocation-model=static",
+  "-Cpanic=abort",
+]

@@ -1,0 +1,64 @@
+[package]
+name = "app-nostd"
+version = "0.1.0"
+edition = "2021"
+publish = false
+include = ["Makefile", "libapp_nostd.h"]
+
+[profile.test]
+panic = "unwind" # Fix warning: output filename collision.
+
+[profile.dev]
+opt-level = 0
+debug = true
+incremental = true
+lto = "fat"
+panic = "abort"
+overflow-checks = true
+rpath = true
+
+[profile.release]
+opt-level = "z"
+strip = "symbols"
+lto = "thin"
+panic = "abort"
+codegen-units = 1
+overflow-checks = true
+rpath = true
+
+[lints.rust]
+async_fn_in_trait = "allow"
+hidden_glob_reexports = "allow"
+
+[lints.clippy]
+bool_comparison = "allow"
+bool_assert_comparison = "allow"
+needless_return = "allow"
+expect_fun_call = "allow"
+
+[lib]
+path = "src/lib.rs"
+name = "app_nostd"
+crate-type = ["cdylib", "lib"]
+# For static compiling
+#crate-type = ["lib"]
+
+[[bin]]
+path = "src/main.rs"
+name = "app-nostd"
+
+[features]
+default = ["no_std"]
+no_std = []
+
+[build-dependencies]
+cc = "1.2"
+bindgen = "0"
+cbindgen = "0"
+
+[dependencies]
+libc = { version = "0.2", default-features = false, features = [
+  "extra_traits",
+] }
+libc_alloc = { version = "1.0" }
+libc-print = { version = "0.1" }
