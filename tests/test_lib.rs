@@ -2,7 +2,7 @@ use {app_nostd::prelude::*, core::ffi::CStr};
 
 #[test]
 fn test_hello_lib() {
-    unsafe {
-        println!("{}", CStr::from_ptr(hello_lib()).to_str().unwrap());
-    }
+    let ptr = hello_lib();
+    let str = unsafe { CStr::from_ptr(ptr).to_str().unwrap() };
+    println!("{str}");
 }
