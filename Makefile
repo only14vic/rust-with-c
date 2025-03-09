@@ -16,7 +16,7 @@ run:
 	cargo run $(args)
 
 run-std:
-	$(make) run args=--no-default-features
+	$(make) run args="--no-default-features $(args)"
 
 check:
 	cargo clippy
@@ -41,7 +41,7 @@ show-symbols:
 		$(libpath)/libapp_nostd.so
 
 show-symbols-dyn:
-	$(make) show-symbols args=-D
+	$(make) show-symbols args="-D $(args)"
 
 help:
 	@echo -e "\
