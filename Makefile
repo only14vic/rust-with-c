@@ -10,6 +10,8 @@ endif
 make = make --no-print-directory
 libpath = ./$(shell find target -name "libapp*.so"|grep -m1 debug|xargs dirname)
 
+all: check run-std run test-c test
+
 run:
 	cargo run $(args)
 
@@ -38,8 +40,19 @@ show-symbols:
 		$(libpath)/app-nostd \
 		$(libpath)/libapp_nostd.so
 
-show-symbols-dynamic:
+show-symbols-dyn:
 	$(make) show-symbols args=-D
 
 help:
-	@echo "Usage guide:"
+	@echo -e "\
+	Usage guide:\n\n\
+	make all		- Build, run, testing\n\
+	make run		- Run without 'std'\n\
+	make run-std		- Run with 'std'\n\
+	make check		- Check code\n\
+	make clean		- Clean target directory\n\
+	make test		- Test Rust code\n\
+	make test-c		- Test C code\n\
+	make show-symbols	- Show library symbols\n\
+	make show-symbols-dyn	- Show only dynamic library symbols\
+	"
