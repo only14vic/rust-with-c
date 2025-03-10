@@ -13,15 +13,21 @@ fn main() {
     println!("cargo:rerun-if-changed=cbindgen.toml");
     println!("cargo:rerun-if-changed=/usr/include/libircclient/libircclient.h");
 
+    //
+    // Configuration
+    //
+    let out_path =
+        PathBuf::from_iter([&env::var("CARGO_MANIFEST_DIR").unwrap(), "include"]);
+
+    //
+    // Binding C code
+    //
     let bindings = bindgen::Builder::default()
         .use_core()
         .headers(["/usr/include/libircclient/libircclient.h"])
         .allowlist_item("irc_.*")
         .generate()
         .expect("Unable to generate bindings");
-
-    let out_path =
-        PathBuf::from_iter([&env::var("CARGO_MANIFEST_DIR").unwrap(), "include"]);
 
     create_dir_all(out_path.as_path())
         .expect(&format!("Couldn't create directory: {out_path:?}"));
@@ -45,6 +51,9 @@ fn main() {
 
     //println!("cargo:warning={:?} was formatted successfully.", &out_path);
 
+    //
+    // Binding Rust code
+    //
     let cbindgens_filename = PathBuf::from_iter([
         out_path.as_os_str(),
         OsStr::new(&format!(
