@@ -13,7 +13,7 @@ endif
 make = make --no-print-directory
 libpath = ./$(shell find target -name "libapp*.so"|grep -m1 debug|xargs dirname)
 
-all: check run-std test run test-c
+all: clean run-std test run test-c check
 
 run:
 	cargo run $(args)
