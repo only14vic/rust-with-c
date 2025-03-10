@@ -5,6 +5,9 @@
 ### Usage
 
 ```sh
+# Build, run, test
+make all
+
 # With "no_std"
 make run
 
