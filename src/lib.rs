@@ -6,7 +6,7 @@
 #[macro_use]
 extern crate std;
 
+mod no_std_core;
+
 pub mod prelude;
 pub mod irc;
-
-mod no_std_core;
