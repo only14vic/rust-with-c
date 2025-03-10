@@ -4,8 +4,7 @@
 use {
     app_nostd::{Logger, prelude::*},
     core::{ffi::CStr, hint::black_box},
-    libc::EXIT_SUCCESS,
-    log::info
+    libc::EXIT_SUCCESS
 };
 #[cfg(feature = "no_std")]
 use libc_print::std_name::*;
@@ -15,7 +14,7 @@ extern "C" fn main() -> i32 {
     Logger::init();
 
     let no_std = cfg!(feature = "no_std");
-    info!("no_std = {no_std}");
+    log::info!("no_std = {no_std}");
 
     println!("Hello, World!");
 

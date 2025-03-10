@@ -1,7 +1,5 @@
-ifneq ("$(wildcard .env)","")
-	include .env
-	export $(shell grep -v '^#' .env | xargs)
-endif
+-include .env
+export
 
 SHELL = sh
 .DEFAULT_GOAL = help
@@ -45,6 +43,9 @@ show-symbols:
 
 show-symbols-dyn:
 	$(make) show-symbols args="-D $(args)"
+
+env:
+	env
 
 help:
 	@echo -e "\

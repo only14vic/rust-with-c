@@ -19,12 +19,8 @@ impl Logger {
         let level: LevelFilter = unsafe {
             match getenv(c"LOG_LEVEL".as_ptr()) {
                 level if level.is_null() == false => {
-                    LevelFilter::from_str(
-                        CStr::from_ptr(level)
-                            .to_string_lossy()
-                            .trim_end_matches("=")
-                    )
-                    .unwrap()
+                    LevelFilter::from_str(CStr::from_ptr(level).to_string_lossy().trim())
+                        .unwrap()
                 },
                 _ => {
                     if cfg!(debug_assertions) {

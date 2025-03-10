@@ -6,18 +6,20 @@ use {
 fn main() {
     dotenv().ok();
 
-    println!("cargo::rustc-link-lib=ircclient");
-    //println!("cargo::rustc-link-search=/usr/lib");
-
-    println!("cargo:rerun-if-changed=build.rs");
-    println!("cargo:rerun-if-changed=cbindgen.toml");
-    println!("cargo:rerun-if-changed=/usr/include/libircclient/libircclient.h");
-
     //
     // Configuration
     //
+    println!("cargo:rerun-if-changed=build.rs");
+    println!("cargo:rerun-if-changed=cbindgen.toml");
+
     let out_path =
         PathBuf::from_iter([&env::var("CARGO_MANIFEST_DIR").unwrap(), "include"]);
+
+    //
+    // Linking libraries
+    //
+    println!("cargo::rustc-link-lib=ircclient");
+    //println!("cargo::rustc-link-search=/usr/lib");
 
     //
     // Binding C code
