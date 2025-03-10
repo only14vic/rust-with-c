@@ -1,4 +1,7 @@
--include .env
+ifneq ("$(wildcard .env)","")
+	include .env
+	export $(shell grep -v '^#' .env | xargs)
+endif
 
 SHELL = sh
 .DEFAULT_GOAL = help

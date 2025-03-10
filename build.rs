@@ -1,34 +1,62 @@
-use std::{env, path::PathBuf};
+use {
+    dotenv::dotenv,
+    std::{env, ffi::OsStr, fs::create_dir_all, path::PathBuf, process::Command}
+};
 
 fn main() {
-    // Not necessarily
-    //println!("cargo::rustc-link-lib=ircclient");
+    dotenv().ok();
+
+    println!("cargo::rustc-link-lib=ircclient");
     //println!("cargo::rustc-link-search=/usr/lib");
 
-    println!("cargo:rerun-if-changed=build.rc");
+    println!("cargo:rerun-if-changed=build.rs");
     println!("cargo:rerun-if-changed=cbindgen.toml");
     println!("cargo:rerun-if-changed=/usr/include/libircclient/libircclient.h");
 
     let bindings = bindgen::Builder::default()
-        .header("/usr/include/libircclient/libircclient.h")
-        .allowlist_item("irc_.*")
         .use_core()
+        .headers(["/usr/include/libircclient/libircclient.h"])
+        .allowlist_item("irc_.*")
         .generate()
         .expect("Unable to generate bindings");
 
-    let mut out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
-    out_path.push("irc_bindings.rs");
+    let out_path =
+        PathBuf::from_iter([&env::var("CARGO_MANIFEST_DIR").unwrap(), "include"]);
+
+    create_dir_all(out_path.as_path())
+        .expect(&format!("Couldn't create directory: {out_path:?}"));
+
+    let bindings_file =
+        PathBuf::from_iter([out_path.as_os_str(), OsStr::new("irc_bindings.rs")]);
+
     bindings
-        .write_to_file(out_path)
+        .write_to_file(&bindings_file)
         .expect("Couldn't write bindings!");
+
+    let output = Command::new("rustup")
+        .args(["run", "nightly", "rustfmt", bindings_file.to_str().unwrap()])
+        .output()
+        .expect("Could not format binding file.");
+
+    assert!(
+        output.status.success(),
+        "Unsuccessful status code when running `rustfmt`: {output:?}",
+    );
+
+    //println!("cargo:warning={:?} was formatted successfully.", &out_path);
+
+    let cbindgens_filename = PathBuf::from_iter([
+        out_path.as_os_str(),
+        OsStr::new(&format!(
+            "lib{}.h",
+            env::var("CARGO_PKG_NAME").unwrap().replace("-", "_")
+        ))
+    ]);
 
     cbindgen::Builder::new()
         .with_config(cbindgen::Config::from_file("cbindgen.toml").unwrap())
         .with_crate(env::var("CARGO_MANIFEST_DIR").unwrap())
         .generate()
         .expect("Unable to generate bindings")
-        .write_to_file(format!(
-            "lib{}.h",
-            env::var("CARGO_PKG_NAME").unwrap().replace("-", "_")
-        ));
+        .write_to_file(cbindgens_filename);
 }

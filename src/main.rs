@@ -2,17 +2,22 @@
 #![no_main]
 
 use {
-    app_nostd::prelude::*,
+    app_nostd::{Logger, prelude::*},
     core::{ffi::CStr, hint::black_box},
-    libc::EXIT_SUCCESS
+    libc::EXIT_SUCCESS,
+    log::info
 };
 #[cfg(feature = "no_std")]
 use libc_print::std_name::*;
 
 #[no_mangle]
 extern "C" fn main() -> i32 {
+    Logger::init();
+
     let no_std = cfg!(feature = "no_std");
-    println!("Hello, World! [no_std = {no_std}]");
+    info!("no_std = {no_std}");
+
+    println!("Hello, World!");
 
     let res = hello_lib();
     let str = unsafe { CStr::from_ptr(res).to_str().unwrap() };

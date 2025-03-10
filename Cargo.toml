@@ -3,7 +3,7 @@ name = "app-nostd"
 version = "0.1.0"
 edition = "2021"
 publish = false
-include = ["Makefile", "libapp_nostd.h"]
+include = ["Makefile", "include/libapp_nostd.h"]
 
 [profile.test]
 panic = "unwind" # Fix warning: output filename collision.
@@ -35,6 +35,7 @@ bool_comparison = "allow"
 bool_assert_comparison = "allow"
 needless_return = "allow"
 expect_fun_call = "allow"
+tabs_in_doc_comments = "allow"
 
 [lib]
 path = "src/lib.rs"
@@ -55,6 +56,8 @@ no_std = []
 cc = "1.2"
 bindgen = "0"
 cbindgen = "0"
+log = { version = "0.4" }
+dotenv = { version = "0.15" }
 
 [dependencies]
 libc = { version = "0.2", default-features = false, features = [
@@ -62,3 +65,4 @@ libc = { version = "0.2", default-features = false, features = [
 ] }
 libc_alloc = { version = "1.0" }
 libc-print = { version = "0.1" }
+log = { version = "0.4" }

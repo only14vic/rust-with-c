@@ -7,6 +7,9 @@
 extern crate std;
 
 mod no_std_core;
+mod logger;
 
 pub mod prelude;
 pub mod irc;
+
+pub use logger::*;
