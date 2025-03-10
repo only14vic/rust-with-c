@@ -9,7 +9,7 @@ ifndef VERBOSE
 endif
 
 make = make --no-print-directory
-libpath = ./$(shell find target -name "libapp*.so"|grep -m1 debug|xargs dirname)
+libpath = ./$(shell find target -name "libapp*.so" -path "*/debug/*" -exec dirname "{}" \; 2>/dev/null | head -n1)
 
 all: clean run-std test run test-c check
 
@@ -46,6 +46,9 @@ show-symbols-dyn:
 
 env:
 	env
+
+config:
+	@echo libpath = $(libpath)
 
 help:
 	@echo -e "\
