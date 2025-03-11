@@ -12,8 +12,6 @@ pub extern "C" fn hello_lib(a: i32) -> *mut c_char {
         )
     };
 
-    //dbg!(unsafe { CStr::from_ptr(buffer) });
-
     log::trace!("hello_lib(): [{buffer:p}]");
     return buffer;
 }

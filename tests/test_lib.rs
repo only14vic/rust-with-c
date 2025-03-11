@@ -1,10 +1,9 @@
 use {
     app_nostd::prelude::*,
     core::{
-        ffi::{CStr, c_char, c_void},
+        ffi::{CStr, c_char},
         ptr::addr_of
-    },
-    libc::free
+    }
 };
 
 #[test]
@@ -22,6 +21,8 @@ fn test_hello_lib() {
         let str = unsafe { CStr::from_ptr(ptr).to_str().unwrap() };
         println!("[{str:p}]: {str}");
 
-        unsafe { free(ptr as *mut c_void) };
+        let _ = unsafe { Box::from_raw(ptr) };
+        // OR you may use libc::free()
+        //unsafe { free(ptr as *mut c_void) };
     }
 }

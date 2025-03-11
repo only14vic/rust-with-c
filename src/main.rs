@@ -1,13 +1,13 @@
 #![no_main]
 #![cfg_attr(feature = "no_std", no_std)]
 
+extern crate alloc;
+
 use {
+    alloc::boxed::Box,
     app_nostd::prelude::*,
-    core::{
-        ffi::{CStr, c_void},
-        hint::black_box
-    },
-    libc::{EXIT_SUCCESS, free}
+    core::{ffi::CStr, hint::black_box},
+    libc::EXIT_SUCCESS
 };
 
 #[no_mangle]
@@ -20,10 +20,10 @@ extern "C" fn main() -> i32 {
     println!("Hello, World!");
 
     for i in 0..5 {
-        let res = hello_lib(i);
-        let str = unsafe { CStr::from_ptr(res).to_str().unwrap() };
+        let ptr = hello_lib(i);
+        let str = unsafe { CStr::from_ptr(ptr).to_str().unwrap() };
         println!("[{str:p}] {str}");
-        unsafe { free(res as *mut c_void) };
+        let _ = unsafe { Box::from_raw(ptr) };
     }
 
     let x: u8 = black_box(1);
