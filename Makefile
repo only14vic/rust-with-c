@@ -26,6 +26,7 @@ clean:
 	rm -fr target/*
 
 test:
+	find target -name "libapp*.rlib" -delete
 	RUSTFLAGS="-Zpanic_abort_tests -Cpanic=unwind" \
 		cargo +nightly test --no-default-features $(args) -- --nocapture --color always
 
