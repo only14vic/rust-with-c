@@ -1,12 +1,10 @@
-extern crate alloc;
-
+#[allow(unused_imports)]
+use crate::prelude::*;
 use {
     core::{ffi::CStr, str::FromStr},
     libc::getenv,
     log::{LevelFilter, Log}
 };
-#[cfg(feature = "no_std")]
-use libc_print::std_name::*;
 
 static LOGGER: Logger = Logger;
 

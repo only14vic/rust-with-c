@@ -1,8 +1,3 @@
-extern crate alloc;
-
-#[allow(unused_imports)]
-#[cfg(feature = "no_std")]
-use libc_print::std_name::*;
 use {alloc::boxed::Box, core::ffi::c_char, libc::sprintf};
 
 #[no_mangle]

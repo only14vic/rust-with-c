@@ -1,13 +1,11 @@
-#![cfg_attr(feature = "no_std", no_std)]
 #![no_main]
+#![cfg_attr(feature = "no_std", no_std)]
 
 use {
     app_nostd::prelude::*,
     core::{ffi::CStr, hint::black_box},
     libc::EXIT_SUCCESS
 };
-#[cfg(feature = "no_std")]
-use libc_print::std_name::*;
 
 #[no_mangle]
 extern "C" fn main() -> i32 {
