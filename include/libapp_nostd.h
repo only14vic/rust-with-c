@@ -3,8 +3,10 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-typedef const char *(*foo_callback)(int32_t);
+typedef char *(*foo_callback)(int32_t);
 
-const char *hello_lib(void);
+void log_init(void);
 
-const char *lib_foo_callback(int32_t a);
+char *hello_lib(void);
+
+char *lib_foo_callback(int32_t a);

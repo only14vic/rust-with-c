@@ -9,7 +9,7 @@ use {
 
 #[no_mangle]
 extern "C" fn main() -> i32 {
-    Logger::init();
+    log_init();
 
     let no_std = cfg!(feature = "no_std");
     log::info!("no_std = {no_std}");

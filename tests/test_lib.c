@@ -5,8 +5,11 @@ void foo(foo_callback callback, int a);
 
 int main()
 {
-    const char* res = hello_lib();
+    log_init();
+
+    char* res = hello_lib();
     printf("%s\n", res);
+    free(res);
 
     foo_callback callback = &lib_foo_callback;
     foo(callback, 333);
@@ -16,6 +19,7 @@ int main()
 
 void foo(foo_callback callback, int a)
 {
-    const char* res = (*callback)(a);
-    printf("Callback: %s\n", res);
+    char* res = (*callback)(a);
+    printf("%s\n", res);
+    free(res);
 }

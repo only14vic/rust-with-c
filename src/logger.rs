@@ -8,7 +8,7 @@ use {
 
 static LOGGER: Logger = Logger;
 
-pub struct Logger;
+struct Logger;
 
 impl Logger {
     pub fn init() {
@@ -41,9 +41,19 @@ impl Log for Logger {
 
     fn log(&self, record: &log::Record) {
         if self.enabled(record.metadata()) {
-            eprintln!("[{}] {}", record.level(), record.args());
+            eprintln!(
+                "[{}] [{}] {}",
+                record.level(),
+                record.target(),
+                record.args()
+            );
         }
     }
 
     fn flush(&self) {}
+}
+
+#[no_mangle]
+pub extern "C" fn log_init() {
+    Logger::init();
 }
