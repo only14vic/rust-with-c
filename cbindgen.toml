@@ -4,7 +4,15 @@ no_includes = false
 [export]
 prefix = "app_"
 renaming_overrides_prefixing = true
-item_types = ["enums", "structs", "opaque", "functions", "typedefs"]
+item_types = [
+  "constants",
+  "enums",
+  "structs",
+  "unions",
+  "opaque",
+  "functions",
+  "typedefs",
+]
 exclude = ["rust_eh_personality", "_Unwind_Resume"]
 include = ["FooCallback"]
 

@@ -7,9 +7,8 @@
 extern crate std;
 
 mod no_std;
-mod logger;
 
 pub mod prelude;
+pub mod logger;
 pub mod irc;
-
-pub use logger::*;
+pub mod foo;

@@ -2,7 +2,7 @@
 #![no_main]
 
 use {
-    app_nostd::{Logger, prelude::*},
+    app_nostd::prelude::*,
     core::{ffi::CStr, hint::black_box},
     libc::EXIT_SUCCESS
 };
