@@ -15,8 +15,8 @@ fn test_hello_lib() {
         }
         assert_eq!(ptr as *const c_char, last_ptr);
 
-        let str = unsafe { CStr::from_ptr(ptr).to_str().unwrap() };
-        println!("[{str:p}]: {str}");
+        let str = unsafe { CStr::from_ptr(ptr).to_string_lossy() };
+        println!("[{ptr:p}]: {str}");
 
         let _ = unsafe { Box::from_raw(ptr) };
         // OR you may use libc::free()
