@@ -27,7 +27,7 @@ clean:
 
 test:
 	RUSTFLAGS="-Zpanic_abort_tests -Cpanic=unwind" \
-	cargo +nightly test --no-default-features $(args) -- --nocapture --color always
+		cargo +nightly test --no-default-features $(args) -- --nocapture --color always
 
 test-c:
 	gcc -o use_shared -Oz \
