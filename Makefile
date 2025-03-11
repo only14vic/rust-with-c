@@ -26,7 +26,7 @@ clean:
 	rm -fr target/*
 
 test:
-	RUSTFLAGS="-Zpanic_abort_tests -Cpanic=abort" \
+	RUSTFLAGS="-Zpanic_abort_tests -Cpanic=unwind" \
 	cargo +nightly test --no-default-features $(args) -- --nocapture --color always
 
 test-c:
