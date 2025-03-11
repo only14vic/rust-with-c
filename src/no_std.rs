@@ -10,9 +10,7 @@ static GLOBAL_ALLOC: LibcAlloc = LibcAlloc;
 #[panic_handler]
 fn panic(info: &PanicInfo<'_>) -> ! {
     eprintln!("{info}");
-    unsafe {
-        abort();
-    }
+    unsafe { abort() };
 }
 
 #[no_mangle]

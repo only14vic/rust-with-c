@@ -36,13 +36,13 @@ test-c:
 		-L$(libpath) -lapp_nostd
 	./target/test_lib_c
 
-show-symbols:
+symbols:
 	nm -g $(args) \
 		$(libpath)/app-nostd \
 		$(libpath)/libapp_nostd.so
 
-show-symbols-dyn:
-	$(make) show-symbols args="-D $(args)"
+symbols-dyn:
+	$(make) symbols args="-D $(args)"
 
 env:
 	env
