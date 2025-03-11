@@ -1,9 +1,6 @@
 use {
     app_nostd::prelude::*,
-    core::{
-        ffi::{CStr, c_char},
-        ptr::addr_of
-    }
+    core::ffi::{CStr, c_char}
 };
 
 #[test]
@@ -16,7 +13,7 @@ fn test_hello_lib() {
         if last_ptr.is_null() {
             last_ptr = ptr;
         }
-        assert_eq!(addr_of!(*ptr), addr_of!(*last_ptr));
+        assert_eq!(ptr as *const c_char, last_ptr);
 
         let str = unsafe { CStr::from_ptr(ptr).to_str().unwrap() };
         println!("[{str:p}]: {str}");
