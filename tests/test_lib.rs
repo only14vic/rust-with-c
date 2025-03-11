@@ -23,6 +23,6 @@ fn test_hello_lib() {
 
         let _ = unsafe { Box::from_raw(ptr) };
         // OR you may use libc::free()
-        //unsafe { free(ptr as *mut c_void) };
+        //unsafe { libc::free(ptr as *mut c_void) };
     }
 }
