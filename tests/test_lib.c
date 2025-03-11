@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <assert.h>
 #include "../include/libapp_nostd.h"
 
@@ -18,7 +20,7 @@ int main()
         }
         assert(last_ptr == ptr);
 
-        printf("[%p] %s\n", ptr, ptr);
+        printf("[%p] %s (strlen=%d)\n", ptr, ptr, strlen(ptr));
 
         free(ptr);
     }
@@ -38,6 +40,6 @@ int main()
 void foo(foo_callback callback, int a)
 {
     char * ptr = (*callback)(a);
-    printf("[%p] %s\n", ptr, ptr);
+    printf("[%p] %s (strlen=%d)\n", ptr, ptr, strlen(ptr));
     free(ptr);
 }

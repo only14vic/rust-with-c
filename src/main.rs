@@ -22,7 +22,7 @@ extern "C" fn main() -> i32 {
     for i in 0..5 {
         let ptr = hello_lib(i);
         let str = unsafe { CStr::from_ptr(ptr).to_str().unwrap() };
-        println!("[{str:p}] {str}");
+        println!("[{str:p}] {str} (strlen={})", str.len());
         let _ = unsafe { Box::from_raw(ptr) };
     }
 
