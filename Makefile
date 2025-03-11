@@ -30,10 +30,10 @@ test:
 	cargo +nightly test --no-default-features $(args) -- --nocapture --color always
 
 test-c:
-	gcc -o use_shared -O3 \
-		-Wl,-rpath='$$ORIGIN',-rpath='$$ORIGIN/lib',-rpath='$$ORIGIN/../lib',-rpath='$(libpath)' \
-		-o target/test_lib_c tests/test_lib.c \
-		-L$(libpath) -lapp_nostd
+	gcc -o use_shared -Oz \
+		-Wl,-z,relro,-z,now,-rpath='$$ORIGIN',-rpath='$$ORIGIN/lib',-rpath='$$ORIGIN/../lib',-rpath='$(libpath)' \
+		-L$(libpath) -lapp_nostd \
+		-o target/test_lib_c tests/test_lib.c
 	./target/test_lib_c
 
 symbols:
