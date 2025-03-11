@@ -30,5 +30,8 @@ extern "C" fn main() -> i32 {
     println!("x = {x}");
     dbg!(x - 1);
 
+    // Waits for key pressing
+    // unsafe { libc::getchar() };
+
     EXIT_SUCCESS
 }

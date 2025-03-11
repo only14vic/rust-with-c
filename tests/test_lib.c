@@ -29,6 +29,9 @@ int main()
         foo(callback, i);
     }
 
+    // Waits for key pressing
+    // getchar();
+
     return 0;
 }
 
