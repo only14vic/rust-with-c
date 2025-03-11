@@ -7,6 +7,6 @@ typedef char *(*foo_callback)(int32_t);
 
 void log_init(void);
 
-char *hello_lib(void);
+char *hello_lib(int32_t a);
 
 char *lib_foo_callback(int32_t a);

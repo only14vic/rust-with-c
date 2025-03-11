@@ -19,10 +19,12 @@ extern "C" fn main() -> i32 {
 
     println!("Hello, World!");
 
-    let res = hello_lib();
-    let str = unsafe { CStr::from_ptr(res).to_str().unwrap() };
-    println!("{str}");
-    unsafe { free(res as *mut c_void) };
+    for i in 0..5 {
+        let res = hello_lib(i);
+        let str = unsafe { CStr::from_ptr(res).to_str().unwrap() };
+        println!("[{str:p}] {str}");
+        unsafe { free(res as *mut c_void) };
+    }
 
     let x: u8 = black_box(1);
     println!("x = {x}");
