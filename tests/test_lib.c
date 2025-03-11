@@ -35,6 +35,6 @@ int main()
 void foo(foo_callback callback, int a)
 {
     char * ptr = (*callback)(a);
-    printf("%p: %s\n", ptr, ptr);
+    printf("[%p] %s\n", ptr, ptr);
     free(ptr);
 }
