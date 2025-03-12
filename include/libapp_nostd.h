@@ -1,3 +1,9 @@
+/*
+Fix implicit declaration of function ‘usleep’:
+#define _XOPEN_SOURCE 500
+*/
+
+
 #pragma once
 
 #include <stdarg.h>
@@ -6,6 +12,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
+#include <unistd.h>
+#include <sched.h>
+
 
 typedef char *(*foo_callback)(int32_t);
 

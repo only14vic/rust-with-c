@@ -7,7 +7,7 @@ use {
     },
     libc::{
         printf, pthread_mutex_init, pthread_mutex_lock, pthread_mutex_t,
-        pthread_mutex_unlock, sprintf, strcpy, strlen, usleep
+        pthread_mutex_unlock, sched_yield, sprintf, strcpy, strlen, usleep
     }
 };
 
@@ -71,6 +71,7 @@ pub extern "C" fn hello_lib_pthread(arg: *mut c_void) -> *mut c_void {
 
             let _ = Box::from_raw(ptr);
 
+            sched_yield();
             usleep(1);
         }
     }

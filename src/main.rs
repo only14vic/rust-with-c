@@ -13,7 +13,7 @@ use {
     },
     libc::{
         EXIT_SUCCESS, malloc_stats, pthread_create, pthread_join, pthread_mutex_lock,
-        pthread_mutex_unlock, pthread_t, usleep
+        pthread_mutex_unlock, pthread_t, sched_yield, usleep
     }
 };
 
@@ -39,6 +39,8 @@ extern "C" fn main() -> i32 {
             pthread_mutex_lock(MUTEX.as_mut_ptr());
             println!("Main thread");
             pthread_mutex_unlock(MUTEX.as_mut_ptr());
+
+            sched_yield();
             usleep(1);
         }
 

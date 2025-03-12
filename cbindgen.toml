@@ -2,7 +2,14 @@ language = "C"
 cpp_compat = false
 pragma_once = true
 no_includes = false
-sys_includes = ["string.h", "pthread.h"]
+header = """
+/*
+Fix implicit declaration of function ‘usleep’:
+#define _XOPEN_SOURCE 500
+*/
+"""
+after_includes = ""
+sys_includes = ["string.h", "pthread.h", "unistd.h", "sched.h"]
 
 [export]
 renaming_overrides_prefixing = true

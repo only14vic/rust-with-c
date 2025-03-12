@@ -1,8 +1,14 @@
+#define _XOPEN_SOURCE 500
+
 #include <assert.h>
+#include <bits/pthreadtypes.h>
 #include <malloc.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <pthread.h>
+#include <unistd.h>
+#include <sched.h>
 #include "../include/libapp_nostd.h"
 
 void foo(foo_callback callback, int a);
@@ -31,6 +37,26 @@ int main() {
 
         free(ptr);
     }
+
+    char *value = (char *)malloc(100 * sizeof(char));
+    strcpy(value, "Data from Main.");
+
+    pthread_t thread;
+    pthread_create(&thread, NULL, &hello_lib_pthread, value);
+
+    for (int i = 0; i < 5; i++) {
+        pthread_mutex_lock(&MUTEX);
+        printf("Main thread\n");
+        pthread_mutex_unlock(&MUTEX);
+
+        sched_yield();
+        usleep(1);
+    }
+
+    pthread_join(thread, (void **)&value);
+
+    printf("Thread value: %s\n", value);
+    free(value);
 
     foo_callback callback = &lib_foo_callback;
 
