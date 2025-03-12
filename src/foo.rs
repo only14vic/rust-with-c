@@ -1,7 +1,8 @@
 use {
+    crate::prelude::*,
     alloc::boxed::Box,
     core::ffi::{CStr, c_char, c_void},
-    libc::{printf, sprintf, strcpy, strlen}
+    libc::{printf, sprintf, strcpy, strlen, usleep}
 };
 
 #[no_mangle]
@@ -22,9 +23,8 @@ pub extern "C" fn hello_lib(a: i32) -> *mut c_char {
 
 #[no_mangle]
 pub extern "C" fn hello_lib_pthread(arg: *mut c_void) -> *mut c_void {
-    let value = arg as *mut c_char;
-
-    unsafe { printf(c"Thread argument: \"%s\"\n".as_ptr(), value) };
+    let value = unsafe { CStr::from_ptr(arg.cast()).to_string_lossy() };
+    println!("Thread argument: {value:?}",);
 
     for i in 0..5 {
         let ptr = hello_lib(i);
@@ -52,11 +52,13 @@ pub extern "C" fn hello_lib_pthread(arg: *mut c_void) -> *mut c_void {
         };
 
         let _ = unsafe { Box::from_raw(ptr) };
+
+        unsafe { usleep(100) };
     }
 
-    unsafe { strcpy(value, c"Data from Thread.".as_ptr()) };
+    unsafe { strcpy(arg.cast(), c"Data from Thread.".as_ptr()) };
 
-    return value.cast();
+    return arg;
 }
 
 #[no_mangle]

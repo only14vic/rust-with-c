@@ -7,10 +7,11 @@ use {
     alloc::string::String,
     app_nostd::prelude::*,
     core::{
+        ffi::CStr,
         hint::black_box,
         ptr::{null, null_mut}
     },
-    libc::{EXIT_SUCCESS, malloc_stats, printf, pthread_create, pthread_join, pthread_t}
+    libc::{EXIT_SUCCESS, malloc_stats, pthread_create, pthread_join, pthread_t, usleep}
 };
 
 #[no_mangle]
@@ -29,16 +30,17 @@ extern "C" fn main() -> i32 {
 
     let ret = unsafe {
         pthread_create(&mut thread, null(), hello_lib_pthread, value_ptr.cast());
+
+        for _ in 0..5 {
+            println!("Main thread");
+            usleep(100);
+        }
+
         pthread_join(thread, null_mut())
     };
 
-    unsafe {
-        printf(
-            c"Thread return: %ld\nThread value: \"%s\"\n".as_ptr(),
-            ret,
-            value_ptr
-        )
-    };
+    let value_str = unsafe { CStr::from_ptr(value_ptr.cast()).to_string_lossy() };
+    println!("Thread return: {ret}\nThread value: {value_str:?}",);
 
     let x: u8 = black_box(1);
     println!("x = {x}");
