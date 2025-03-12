@@ -1,7 +1,6 @@
 #define _XOPEN_SOURCE 500
 
 #include <assert.h>
-#include <bits/pthreadtypes.h>
 #include <malloc.h>
 #include <stdio.h>
 #include <stdlib.h>
