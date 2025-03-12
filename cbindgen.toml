@@ -1,10 +1,13 @@
 language = "C"
+cpp_compat = false
+pragma_once = true
 no_includes = false
+sys_includes = ["string.h", "pthread.h"]
 
 [export]
-prefix = "app_"
 renaming_overrides_prefixing = true
 item_types = [
+  "globals",
   "constants",
   "enums",
   "structs",

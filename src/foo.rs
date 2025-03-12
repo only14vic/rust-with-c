@@ -1,11 +1,26 @@
 use {
     alloc::boxed::Box,
-    core::ffi::{CStr, c_char, c_void},
-    libc::{printf, sprintf, strcpy, strlen, usleep}
+    core::{
+        ffi::{CStr, c_char, c_void},
+        mem::MaybeUninit,
+        ptr::null_mut
+    },
+    libc::{
+        printf, pthread_mutex_init, pthread_mutex_lock, pthread_mutex_t,
+        pthread_mutex_unlock, sprintf, strcpy, strlen, usleep
+    }
 };
 
 #[allow(unused_imports)]
 use crate::prelude::*;
+
+#[no_mangle]
+pub static mut MUTEX: MaybeUninit<pthread_mutex_t> = MaybeUninit::zeroed();
+
+#[no_mangle]
+pub extern "C" fn foo_init() {
+    unsafe { pthread_mutex_init(MUTEX.as_mut_ptr(), null_mut()) };
+}
 
 #[no_mangle]
 pub extern "C" fn hello_lib(a: i32) -> *mut c_char {
@@ -43,19 +58,21 @@ pub extern "C" fn hello_lib_pthread(arg: *mut c_void) -> *mut c_void {
         );
         */
 
-        // 2x faster than println!()
         unsafe {
+            pthread_mutex_lock(MUTEX.as_mut_ptr());
+            // 2x faster than println!()
             printf(
                 c"[%p] %s (strlen=%ld)\n".as_ptr(),
                 ptr,
                 str.as_ptr(),
                 strlen(ptr)
-            )
-        };
+            );
+            pthread_mutex_unlock(MUTEX.as_mut_ptr());
 
-        let _ = unsafe { Box::from_raw(ptr) };
+            let _ = Box::from_raw(ptr);
 
-        unsafe { usleep(100) };
+            usleep(1);
+        }
     }
 
     unsafe { strcpy(arg.cast(), c"Data from Thread.".as_ptr()) };

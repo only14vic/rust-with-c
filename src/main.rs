@@ -11,12 +11,16 @@ use {
         hint::black_box,
         ptr::{null, null_mut}
     },
-    libc::{EXIT_SUCCESS, malloc_stats, pthread_create, pthread_join, pthread_t, usleep}
+    libc::{
+        EXIT_SUCCESS, malloc_stats, pthread_create, pthread_join, pthread_mutex_lock,
+        pthread_mutex_unlock, pthread_t, usleep
+    }
 };
 
 #[no_mangle]
 extern "C" fn main() -> i32 {
     log_init();
+    foo_init();
 
     let no_std = cfg!(feature = "no_std");
     log::info!("no_std = {no_std}");
@@ -32,8 +36,10 @@ extern "C" fn main() -> i32 {
         pthread_create(&mut thread, null(), hello_lib_pthread, value_ptr.cast());
 
         for _ in 0..5 {
+            pthread_mutex_lock(MUTEX.as_mut_ptr());
             println!("Main thread");
-            usleep(100);
+            pthread_mutex_unlock(MUTEX.as_mut_ptr());
+            usleep(1);
         }
 
         pthread_join(thread, null_mut())

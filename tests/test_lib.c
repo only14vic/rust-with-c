@@ -9,6 +9,7 @@ void foo(foo_callback callback, int a);
 
 int main() {
     log_init();
+    foo_init();
 
     char *last_ptr = NULL;
 

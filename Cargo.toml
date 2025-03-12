@@ -29,6 +29,7 @@ rpath = true
 [lints.rust]
 async_fn_in_trait = "allow"
 hidden_glob_reexports = "allow"
+static_mut_refs = "allow"
 
 [lints.clippy]
 bool_comparison = "allow"
