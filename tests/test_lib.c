@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <malloc.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -35,6 +36,8 @@ int main() {
     for (int i = 0; i < 5; i++) {
         foo(callback, i);
     }
+
+    malloc_stats();
 
     // Waits for key pressing
     // getchar();

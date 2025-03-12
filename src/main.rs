@@ -7,7 +7,7 @@ use {
     alloc::boxed::Box,
     app_nostd::prelude::*,
     core::{ffi::CStr, hint::black_box},
-    libc::{EXIT_SUCCESS, printf, strlen}
+    libc::{EXIT_SUCCESS, malloc_stats, printf, strlen}
 };
 
 #[no_mangle]
@@ -50,6 +50,8 @@ extern "C" fn main() -> i32 {
     let x: u8 = black_box(1);
     println!("x = {x}");
     dbg!(x - 1);
+
+    unsafe { malloc_stats() };
 
     // Waits for key pressing
     // unsafe { libc::getchar() };
