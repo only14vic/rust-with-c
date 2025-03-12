@@ -1,9 +1,11 @@
 use {
-    crate::prelude::*,
     alloc::boxed::Box,
     core::ffi::{CStr, c_char, c_void},
     libc::{printf, sprintf, strcpy, strlen, usleep}
 };
+
+#[allow(unused_imports)]
+use crate::prelude::*;
 
 #[no_mangle]
 pub extern "C" fn hello_lib(a: i32) -> *mut c_char {
