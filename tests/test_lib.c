@@ -1,19 +1,19 @@
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 #include "../include/libapp_nostd.h"
 
 void foo(foo_callback callback, int a);
 
-int main()
-{
+int main() {
     log_init();
 
-    volatile char * last_ptr = NULL;
+    char *last_ptr = NULL;
 
     for (int i = 0; i < 5; i++) {
-        volatile char * ptr = hello_lib(i);
+        // disable compiler optimization with "volatile"
+        volatile char *ptr = hello_lib(i);
 
         if (ptr == NULL) {
             fprintf(stderr, "Error: hello_lib returned NULL for i=%d\n", i);
@@ -42,9 +42,9 @@ int main()
     return 0;
 }
 
-void foo(foo_callback callback, int a)
-{
-    char * ptr = (*callback)(a);
+void foo(foo_callback callback, int a) {
+    // enable compiler optimization with "restrict"
+    char *restrict ptr = (*callback)(a);
 
     if (ptr == NULL) {
         fprintf(stderr, "Error: callback returned NULL for a=%d\n", a);

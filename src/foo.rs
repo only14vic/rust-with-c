@@ -18,7 +18,7 @@ pub extern "C" fn hello_lib(a: i32) -> *mut c_char {
 
 #[no_mangle]
 pub extern "C" fn lib_foo_callback(a: i32) -> *mut c_char {
-    let buffer: *mut c_char = Box::into_raw(Box::new([0u8; 100])) as *mut i8;
+    let buffer: *mut c_char = Box::into_raw(Box::new([0_i8; 100])) as *mut _;
     unsafe { sprintf(buffer, c"Foo callback: a=%d".as_ptr(), a) };
 
     log::trace!("lib_foo_callback(): [{buffer:p}]");

@@ -13,7 +13,7 @@ fn test_hello_lib() {
         if last_ptr.is_null() {
             last_ptr = ptr;
         }
-        assert_eq!(ptr as *const c_char, last_ptr);
+        assert_eq!(ptr as *const _, last_ptr);
 
         let str = unsafe { CStr::from_ptr(ptr).to_string_lossy() };
         println!("[{ptr:p}]: {str}");
