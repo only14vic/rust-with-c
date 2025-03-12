@@ -7,7 +7,7 @@ use {
     alloc::boxed::Box,
     app_nostd::prelude::*,
     core::{ffi::CStr, hint::black_box},
-    libc::EXIT_SUCCESS
+    libc::{EXIT_SUCCESS, printf, strlen}
 };
 
 #[no_mangle]
@@ -21,8 +21,29 @@ extern "C" fn main() -> i32 {
 
     for i in 0..5 {
         let ptr = hello_lib(i);
-        let str = unsafe { CStr::from_ptr(ptr).to_str().unwrap() };
-        println!("[{str:p}] {str} (strlen={})", str.len());
+        let str = unsafe { CStr::from_ptr(ptr) };
+
+        assert_eq!(ptr.cast_const(), str.as_ptr());
+
+        // Too slowly
+        /*
+        println!(
+            "[{ptr:p}] {} (strlen={})",
+            str.to_string_lossy(),
+            str.count_bytes()
+        );
+        */
+
+        // 2x faster than println!()
+        unsafe {
+            printf(
+                c"[%p] %s (strlen=%ld)\n".as_ptr(),
+                ptr,
+                str.as_ptr(),
+                strlen(ptr)
+            )
+        };
+
         let _ = unsafe { Box::from_raw(ptr) };
     }
 

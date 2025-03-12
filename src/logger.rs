@@ -1,10 +1,11 @@
-#[allow(unused_imports)]
-use crate::prelude::*;
 use {
     core::{ffi::CStr, str::FromStr},
     libc::getenv,
     log::{LevelFilter, Log}
 };
+
+#[allow(unused_imports)]
+use crate::prelude::*;
 
 static LOGGER: Logger = Logger;
 
