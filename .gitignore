@@ -3,3 +3,5 @@
 .gdb_history
 *.vim
 target
+bin
+lib
