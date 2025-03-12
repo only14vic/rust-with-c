@@ -4,10 +4,13 @@
 extern crate alloc;
 
 use {
-    alloc::boxed::Box,
+    alloc::string::String,
     app_nostd::prelude::*,
-    core::{ffi::CStr, hint::black_box},
-    libc::{EXIT_SUCCESS, malloc_stats, printf, strlen}
+    core::{
+        hint::black_box,
+        ptr::{null, null_mut}
+    },
+    libc::{EXIT_SUCCESS, malloc_stats, printf, pthread_create, pthread_join, pthread_t}
 };
 
 #[no_mangle]
@@ -19,33 +22,23 @@ extern "C" fn main() -> i32 {
 
     println!("Hello, World!");
 
-    for i in 0..5 {
-        let ptr = hello_lib(i);
-        let str = unsafe { CStr::from_ptr(ptr) };
+    let mut thread: pthread_t = 0;
+    let mut value = String::with_capacity(100);
+    value.push_str("Data from Main.\0");
+    let value_ptr = value.as_mut_ptr();
 
-        assert_eq!(ptr.cast_const(), str.as_ptr());
+    let ret = unsafe {
+        pthread_create(&mut thread, null(), hello_lib_pthread, value_ptr.cast());
+        pthread_join(thread, null_mut())
+    };
 
-        // Too slowly
-        /*
-        println!(
-            "[{ptr:p}] {} (strlen={})",
-            str.to_string_lossy(),
-            str.count_bytes()
-        );
-        */
-
-        // 2x faster than println!()
-        unsafe {
-            printf(
-                c"[%p] %s (strlen=%ld)\n".as_ptr(),
-                ptr,
-                str.as_ptr(),
-                strlen(ptr)
-            )
-        };
-
-        let _ = unsafe { Box::from_raw(ptr) };
-    }
+    unsafe {
+        printf(
+            c"Thread return: %ld\nThread value: \"%s\"\n".as_ptr(),
+            ret,
+            value_ptr
+        )
+    };
 
     let x: u8 = black_box(1);
     println!("x = {x}");

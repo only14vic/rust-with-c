@@ -1,4 +1,8 @@
-use {alloc::boxed::Box, core::ffi::c_char, libc::sprintf};
+use {
+    alloc::boxed::Box,
+    core::ffi::{CStr, c_char, c_void},
+    libc::{printf, sprintf, strcpy, strlen}
+};
 
 #[no_mangle]
 pub extern "C" fn hello_lib(a: i32) -> *mut c_char {
@@ -14,6 +18,45 @@ pub extern "C" fn hello_lib(a: i32) -> *mut c_char {
 
     log::trace!("hello_lib(): [{buffer:p}]");
     return buffer;
+}
+
+#[no_mangle]
+pub extern "C" fn hello_lib_pthread(arg: *mut c_void) -> *mut c_void {
+    let value = arg as *mut c_char;
+
+    unsafe { printf(c"Thread argument: \"%s\"\n".as_ptr(), value) };
+
+    for i in 0..5 {
+        let ptr = hello_lib(i);
+        let str = unsafe { CStr::from_ptr(ptr) };
+
+        assert_eq!(ptr.cast_const(), str.as_ptr());
+
+        // Too slowly
+        /*
+        println!(
+            "[{ptr:p}] {} (strlen={})",
+            str.to_string_lossy(),
+            str.count_bytes()
+        );
+        */
+
+        // 2x faster than println!()
+        unsafe {
+            printf(
+                c"[%p] %s (strlen=%ld)\n".as_ptr(),
+                ptr,
+                str.as_ptr(),
+                strlen(ptr)
+            )
+        };
+
+        let _ = unsafe { Box::from_raw(ptr) };
+    }
+
+    unsafe { strcpy(value, c"Data from Thread.".as_ptr()) };
+
+    return value.cast();
 }
 
 #[no_mangle]
