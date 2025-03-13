@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <sched.h>
 #include <json-c/json.h>
+#include <json-c/json_object.h>
 #include "../include/libapp_nostd.h"
 
 void foo(foo_callback callback, int a);
@@ -67,7 +68,7 @@ int main() {
     json_object *json = json_object_new_object();
     json_object_object_add(json, "hello", json_object_new_string("World!"));
     json_object_object_add(json, "foo", json_object_new_int(123));
-    json_object_object_add(json, "bar", json_object_new_boolean(true));
+    json_object_object_add(json, "bar", json_object_new_object());
 
     printf(
         "JSON: %s\n",
