@@ -25,7 +25,7 @@ int main() {
         volatile char *ptr = hello_lib(i);
 
         if (ptr == NULL) {
-            fprintf(stderr, "Error: hello_lib returned NULL for i=%d\n", i);
+            perror("Error: hello_lib returned NULL\n");
             return EXIT_FAILURE;
         }
 
