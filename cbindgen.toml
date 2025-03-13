@@ -12,6 +12,7 @@ after_includes = ""
 sys_includes = ["string.h", "pthread.h", "unistd.h", "sched.h"]
 
 [export]
+#prefix = "foo_"
 renaming_overrides_prefixing = true
 item_types = [
   "globals",
@@ -24,7 +25,7 @@ item_types = [
   "typedefs",
 ]
 exclude = ["rust_eh_personality", "_Unwind_Resume"]
-include = ["FooCallback", "FooStruct"]
+include = ["FooCallback"]
 
 [export.rename]
 FooCallback = "foo_callback"
@@ -32,3 +33,10 @@ FooStruct = "foo_struct"
 
 [export.mangle]
 rename_types = "SnakeCase"
+remove_underscores = false
+
+[fn]
+sort_by = "None"
+
+[struct]
+derive_constructor = true

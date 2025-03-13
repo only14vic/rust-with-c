@@ -77,6 +77,10 @@ int main() {
 
     json_object_put(json);
 
+    foo_struct *foo = foo_create("Hello", NULL);
+    printf("FooStruct { foo: '%s', bar: '%s' }\n", foo->foo, foo->bar);
+    foo_drop(foo);
+
     malloc_stats();
 
     // Waits for key pressing

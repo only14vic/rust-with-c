@@ -37,6 +37,7 @@ bool_assert_comparison = "allow"
 needless_return = "allow"
 expect_fun_call = "allow"
 tabs_in_doc_comments = "allow"
+missing_safety_doc = "allow"
 
 [lib]
 path = "src/lib.rs"

@@ -13,7 +13,7 @@ libpath = ./$(shell find target -path "*/debug/lib*.so" -exec dirname "{}" \; 2>
 rustc_sysroot = $(shell rustc --print=sysroot)
 rustc_target = $(shell rustc -vV|grep host:|cut -d' ' -f2)
 
-all: vars clean run-std test run test-c check install
+all: vars clean check run-std test run install test-c
 
 run:
 	cargo run $(args)
@@ -30,13 +30,19 @@ install-std: prepare
 	install -D $(rustc_sysroot)/lib/rustlib/$(rustc_target)/lib/libstd*.so lib/
 
 check:
-	cargo clippy
-
-clean:
-	rm -fr target/* bin/* lib/*
+	cargo check
+	cargo check --no-default-features
+	cargo clippy --no-deps
+	rustup run nightly rustfmt --check src/**
 
 prepare:
 	mkdir -p bin lib
+
+clean:
+	find . -path "./bin/*" -delete \
+		-o -path "./lib/*" -delete \
+		-o -path "./target/*" -a ! -path "*/build/*" \
+			-type f -executable -delete
 
 test:
 	find target -path "*/debug/lib*.rlib" -delete
@@ -71,6 +77,10 @@ vars:
 	@echo rustc_sysroot = $(rustc_sysroot)
 	@echo libpath = $(libpath)
 	@echo --------------------------
+
+_git-pre-commit: check
+
+_git-pre-push: all
 
 help:
 	@echo -e "\

@@ -3,11 +3,11 @@ use {
     core::{
         ffi::{CStr, c_char, c_void},
         mem::MaybeUninit,
-        ptr::null_mut
+        ptr::{NonNull, null_mut}
     },
     libc::{
-        printf, pthread_mutex_init, pthread_mutex_lock, pthread_mutex_t,
-        pthread_mutex_unlock, sched_yield, sprintf, strcpy, strlen, usleep
+        free, printf, pthread_mutex_init, pthread_mutex_lock, pthread_mutex_t,
+        pthread_mutex_unlock, sched_yield, sprintf, strcpy, strdup, strlen, usleep
     },
     serde_json::json
 };
@@ -17,12 +17,6 @@ use crate::prelude::*;
 
 #[no_mangle]
 pub static mut MUTEX: MaybeUninit<pthread_mutex_t> = MaybeUninit::zeroed();
-
-#[allow(dead_code)]
-#[repr(C)]
-struct FooStruct {
-    foo: *mut c_char
-}
 
 #[no_mangle]
 pub extern "C" fn foo_init() {
@@ -100,3 +94,40 @@ pub extern "C" fn lib_foo_callback(a: i32) -> *mut c_char {
 }
 
 pub type FooCallback = unsafe extern "C" fn(i32) -> *mut c_char;
+
+#[derive(Debug)]
+#[repr(C)]
+pub struct FooStruct {
+    foo: Option<NonNull<c_char>>,
+    bar: Option<NonNull<c_char>>
+}
+
+impl FooStruct {
+    #[no_mangle]
+    pub unsafe extern "C" fn foo_create(a: *const c_char, b: *const c_char) -> Box<Self> {
+        let this = Self {
+            foo: if a.is_null() { None } else { NonNull::new(strdup(a)) },
+            bar: if b.is_null() { None } else { NonNull::new(strdup(b)) }
+        };
+
+        println!("Created: {this:#?}");
+
+        this.into()
+    }
+
+    #[no_mangle]
+    pub extern "C" fn foo_drop(self: Box<Self>) {}
+}
+
+impl Drop for FooStruct {
+    fn drop(&mut self) {
+        if let Some(p) = self.foo {
+            unsafe { free(p.as_ptr().cast()) };
+        }
+        if let Some(p) = self.bar {
+            unsafe { free(p.as_ptr().cast()) };
+        }
+
+        println!("FooStruct dropped.");
+    }
+}

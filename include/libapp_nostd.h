@@ -16,11 +16,12 @@ Fix implicit declaration of function ‘usleep’:
 #include <sched.h>
 
 
-typedef char *(*foo_callback)(int32_t);
-
 typedef struct foo_struct {
   char *foo;
+  char *bar;
 } foo_struct;
+
+typedef char *(*foo_callback)(int32_t);
 
 extern pthread_mutex_t MUTEX;
 
@@ -33,3 +34,7 @@ char *hello_lib(int32_t a);
 void *hello_lib_pthread(void *arg);
 
 char *lib_foo_callback(int32_t a);
+
+struct foo_struct *foo_create(const char *a, const char *b);
+
+void foo_drop(struct foo_struct *self);
