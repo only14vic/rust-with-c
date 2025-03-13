@@ -9,7 +9,7 @@ ifndef VERBOSE
 endif
 
 make = make --no-print-directory
-libpath = ./$(shell find target -path "*/debug/lib*.so" -exec dirname "{}" \; 2>/dev/null | head -n1)
+libpath = $(shell find ./target -type d -name debug)
 rustc_sysroot = $(shell rustc --print=sysroot)
 rustc_target = $(shell rustc -vV|grep host:|cut -d' ' -f2)
 
@@ -39,7 +39,8 @@ prepare:
 	mkdir -p bin lib
 
 clean:
-	find . -path "./bin/*" -delete \
+	find ./target ./bin ./lib \
+		   -path "./bin/*" -delete \
 		-o -path "./lib/*" -delete \
 		-o -path "./target/*" -a ! -path "*/build/*" \
 			-type f -executable -delete
