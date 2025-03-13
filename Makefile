@@ -9,13 +9,14 @@ ifndef VERBOSE
 endif
 
 make = make --no-print-directory
-libpath = $(shell find ./target -type d -name debug)
+libpath = $(shell find target -type d -name debug|head -n1)
 rustc_sysroot = $(shell rustc --print=sysroot)
 rustc_target = $(shell rustc -vV|grep host:|cut -d' ' -f2)
 
 all: vars clean check run-std
 	$(make) clean test
-	$(make) clean run install test-c
+	$(make) clean run test-c
+	$(make) install
 
 run:
 	cargo run $(args)
@@ -53,7 +54,7 @@ test:
 
 test-c: prepare
 	gcc -std=c11 -Os -pthread $(args) -Wall -Wno-discarded-qualifiers \
-		-Wl,-z,relro,-z,now,-rpath='$$ORIGIN',-rpath='$$ORIGIN/lib',-rpath='$$ORIGIN/../lib',-rpath='$(libpath)' \
+		-Wl,-z,relro,-z,now,-rpath='$$ORIGIN',-rpath='$$ORIGIN/lib',-rpath='$$ORIGIN/../lib',-rpath='$$ORIGIN/../$(libpath)' \
 		-L$(libpath) -lapp_nostd -ljson-c \
 		-o bin/test_lib_c tests/test_lib.c
 	./bin/test_lib_c
