@@ -18,6 +18,10 @@ Fix implicit declaration of function ‘usleep’:
 
 typedef char *(*foo_callback)(int32_t);
 
+typedef struct foo_struct {
+  char *foo;
+} foo_struct;
+
 extern pthread_mutex_t MUTEX;
 
 void log_init(void);

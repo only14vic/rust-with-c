@@ -8,7 +8,8 @@ use {
     libc::{
         printf, pthread_mutex_init, pthread_mutex_lock, pthread_mutex_t,
         pthread_mutex_unlock, sched_yield, sprintf, strcpy, strlen, usleep
-    }
+    },
+    serde_json::json
 };
 
 #[allow(unused_imports)]
@@ -17,9 +18,17 @@ use crate::prelude::*;
 #[no_mangle]
 pub static mut MUTEX: MaybeUninit<pthread_mutex_t> = MaybeUninit::zeroed();
 
+#[allow(dead_code)]
+#[repr(C)]
+struct FooStruct {
+    foo: *mut c_char
+}
+
 #[no_mangle]
 pub extern "C" fn foo_init() {
     unsafe { pthread_mutex_init(MUTEX.as_mut_ptr(), null_mut()) };
+
+    println!("JSON: {}", json!("Hello JSON!"));
 }
 
 #[no_mangle]

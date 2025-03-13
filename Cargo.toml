@@ -67,3 +67,13 @@ libc = { version = "0.2", default-features = false, features = [
 libc_alloc = { version = "1.0" }
 libc-print = { version = "0.1" }
 log = { version = "0.4" }
+serde = { version = "1", default-features = false, features = [
+  "alloc",
+  "rc",
+  "derive",
+] }
+serde_json = { version = "1", default-features = false, features = [
+  "alloc",
+  "float_roundtrip",
+  "raw_value",
+] }

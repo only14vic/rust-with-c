@@ -24,10 +24,11 @@ item_types = [
   "typedefs",
 ]
 exclude = ["rust_eh_personality", "_Unwind_Resume"]
-include = ["FooCallback"]
+include = ["FooCallback", "FooStruct"]
 
 [export.rename]
 FooCallback = "foo_callback"
+FooStruct = "foo_struct"
 
 [export.mangle]
 rename_types = "SnakeCase"
