@@ -6,7 +6,7 @@ use {
         ptr::{NonNull, null_mut}
     },
     libc::{
-        free, printf, pthread_mutex_init, pthread_mutex_lock, pthread_mutex_t,
+        printf, pthread_mutex_init, pthread_mutex_lock, pthread_mutex_t,
         pthread_mutex_unlock, sched_yield, sprintf, strcpy, strdup, strlen, usleep
     },
     serde_json::json
@@ -122,10 +122,10 @@ impl FooStruct {
 impl Drop for FooStruct {
     fn drop(&mut self) {
         if let Some(p) = self.foo {
-            unsafe { free(p.as_ptr().cast()) };
+            let _ = unsafe { Box::from_raw(p.as_ptr()) };
         }
         if let Some(p) = self.bar {
-            unsafe { free(p.as_ptr().cast()) };
+            let _ = unsafe { Box::from_raw(p.as_ptr()) };
         }
 
         println!("FooStruct dropped.");
