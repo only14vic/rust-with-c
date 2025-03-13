@@ -13,7 +13,8 @@ libpath = $(shell find ./target -type d -name debug)
 rustc_sysroot = $(shell rustc --print=sysroot)
 rustc_target = $(shell rustc -vV|grep host:|cut -d' ' -f2)
 
-all: vars clean check run-std test run install test-c
+all: vars clean check run-std clean run install test-c
+	$(make) clean test
 
 run:
 	cargo run $(args)
@@ -42,11 +43,10 @@ clean:
 	find ./target ./bin ./lib \
 		   -path "./bin/*" -delete \
 		-o -path "./lib/*" -delete \
-		-o -path "./target/*" -a ! -path "*/build/*" \
+		-o -path "./target/*" -a -name "*app*" \
 			-type f -executable -delete
 
 test:
-	find target -path "*/debug/lib*.rlib" -delete
 	RUSTFLAGS="-Zpanic_abort_tests -Cpanic=unwind" \
 		cargo +nightly test --no-default-features $(args) -- --nocapture --color always
 
