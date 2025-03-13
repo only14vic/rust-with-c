@@ -8,6 +8,7 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <sched.h>
+#include <json-c/json.h>
 #include "../include/libapp_nostd.h"
 
 void foo(foo_callback callback, int a);
@@ -62,6 +63,18 @@ int main() {
     for (int i = 0; i < 5; i++) {
         foo(callback, i);
     }
+
+    json_object *json = json_object_new_object();
+    json_object_object_add(json, "hello", json_object_new_string("World!"));
+    json_object_object_add(json, "foo", json_object_new_int(123));
+    json_object_object_add(json, "bar", json_object_new_boolean(true));
+
+    printf(
+        "JSON: %s\n",
+        json_object_to_json_string_ext(json, JSON_C_TO_STRING_PRETTY)
+    );
+
+    json_object_put(json);
 
     malloc_stats();
 
