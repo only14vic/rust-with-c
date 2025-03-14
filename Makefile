@@ -53,7 +53,7 @@ test:
 		cargo +nightly test --no-default-features $(args) -- --nocapture --color always
 
 test-c: prepare
-	gcc -std=c11 -Os -pthread $(args) -Wall -Wno-discarded-qualifiers \
+	gcc -std=gnu18 -Os -pthread $(args) -Wall -Wno-discarded-qualifiers \
 		-Wl,-z,relro,-z,now,-rpath='$$ORIGIN',-rpath='$$ORIGIN/lib',-rpath='$$ORIGIN/../lib',-rpath='$$ORIGIN/../$(libpath)' \
 		-L$(libpath) -lapp_nostd -ljson-c \
 		-o bin/test_lib_c tests/test_lib.c

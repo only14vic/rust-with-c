@@ -26,7 +26,7 @@ int main() {
 
         if (ptr == NULL) {
             perror("Error: hello_lib returned NULL\n");
-            return EXIT_FAILURE;
+            exit(EXIT_FAILURE);
         }
 
         if (!last_ptr) {
@@ -86,7 +86,7 @@ int main() {
     // Waits for key pressing
     // getchar();
 
-    return 0;
+    exit(EXIT_SUCCESS);
 }
 
 void foo(foo_callback callback, int a) {
@@ -95,7 +95,7 @@ void foo(foo_callback callback, int a) {
 
     if (ptr == NULL) {
         fprintf(stderr, "Error: callback returned NULL for a=%d\n", a);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     printf("[%p] %s (strlen=%ld)\n", ptr, ptr, strlen(ptr));
