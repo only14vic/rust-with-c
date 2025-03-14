@@ -1,13 +1,23 @@
 use {
-    alloc::boxed::Box,
-    core::{
-        ffi::{CStr, c_char, c_void},
-        mem::MaybeUninit,
-        ptr::{NonNull, null_mut}
+    crate::cbind,
+    ahash::AHasher,
+    alloc::{
+        boxed::Box,
+        ffi::CString,
+        string::{String, ToString}
     },
+    core::{
+        ffi::{CStr, c_char, c_int, c_void},
+        hash::BuildHasherDefault,
+        mem::MaybeUninit,
+        ptr::{NonNull, null_mut},
+        str::FromStr
+    },
+    indexmap::IndexMap,
     libc::{
-        printf, pthread_mutex_init, pthread_mutex_lock, pthread_mutex_t,
-        pthread_mutex_unlock, sched_yield, sprintf, strcpy, strdup, strlen, usleep
+        F_OK, PATH_MAX, access, dirname, getcwd, printf, pthread_mutex_init,
+        pthread_mutex_lock, pthread_mutex_t, pthread_mutex_unlock, readlink, sched_yield,
+        sprintf, strcpy, strdup, strlen, usleep
     },
     serde_json::json
 };
@@ -18,9 +28,68 @@ use crate::prelude::*;
 #[no_mangle]
 pub static mut MUTEX: MaybeUninit<pthread_mutex_t> = MaybeUninit::zeroed();
 
+pub type ConfigMap<'a> = IndexMap<
+    &'a CStr,
+    IndexMap<&'a CStr, CString, BuildHasherDefault<AHasher>>,
+    BuildHasherDefault<AHasher>
+>;
+
 #[no_mangle]
 pub extern "C" fn foo_init() {
+    // Init MUTEX
     unsafe { pthread_mutex_init(MUTEX.as_mut_ptr(), null_mut()) };
+
+    // Load config
+    unsafe {
+        let exe_path: *mut c_char =
+            Box::into_raw(Box::new([0u8; PATH_MAX as usize])).cast();
+        if readlink(c"/proc/self/exe".as_ptr(), exe_path, PATH_MAX as usize - 1) < 0 {
+            panic!("Couln't get executable file path.");
+        }
+        let exe_path = dirname(exe_path);
+        let exe_path = CString::from_raw(exe_path).into_string().unwrap();
+
+        let cwd = CString::from_raw(getcwd(null_mut(), 0))
+            .into_string()
+            .unwrap();
+        println!("CWD: {cwd}");
+        println!("EXE_PATH: {exe_path}");
+
+        const CONFIG_PATH: &str = "config/app.ini";
+        let mut config_path = String::new();
+        let mut config_subdir = "/".to_string();
+        let mut config_exists = false;
+
+        for _ in 0..10 {
+            config_path = [&exe_path, &config_subdir, CONFIG_PATH].concat();
+            if access(config_path.as_ptr().cast(), F_OK) == 0 {
+                config_exists = true;
+                break;
+            }
+            config_subdir.push_str("../");
+        }
+
+        if !config_exists {
+            panic!("Config file '{CONFIG_PATH}' could not be found.");
+        }
+
+        let mut config: ConfigMap = Default::default();
+
+        if cbind::ini_parse(
+            config_path.as_ptr().cast(),
+            Some(config_map_load),
+            (&mut config as *mut ConfigMap).cast()
+        ) != 0
+        {
+            panic!("Couldn't parse config file.");
+        }
+
+        println!("Config: {config:#?}");
+
+        //let a = config[c"general"][c"boolean"]
+        //    .to_string_lossy()
+        //    .parse::<bool>();
+    };
 
     println!("JSON: {}", json!("Hello JSON!"));
 }
@@ -104,7 +173,7 @@ pub struct FooStruct {
 
 impl FooStruct {
     #[no_mangle]
-    pub unsafe extern "C" fn foo_create(a: *const c_char, b: *const c_char) -> Box<Self> {
+    unsafe extern "C" fn foo_create(a: *const c_char, b: *const c_char) -> Box<Self> {
         let this = Self {
             foo: if a.is_null() { None } else { NonNull::new(strdup(a)) },
             bar: if b.is_null() { None } else { NonNull::new(strdup(b)) }
@@ -116,7 +185,7 @@ impl FooStruct {
     }
 
     #[no_mangle]
-    pub extern "C" fn foo_drop(self: Box<Self>) {}
+    extern "C" fn foo_drop(self: Box<Self>) {}
 }
 
 impl Drop for FooStruct {
@@ -130,4 +199,33 @@ impl Drop for FooStruct {
 
         println!("FooStruct dropped.");
     }
+}
+
+unsafe extern "C" fn config_map_load(
+    user: *mut c_void,
+    section: *const c_char,
+    name: *const c_char,
+    value: *const c_char
+) -> c_int {
+    let config: &mut ConfigMap = &mut *user.cast();
+
+    let section = CStr::from_ptr(strdup(section));
+    let name = CStr::from_ptr(strdup(name));
+    let value = CStr::from_ptr(value);
+
+    if config.contains_key(section) == false {
+        config.insert(section, Default::default());
+    }
+
+    let mut value = value.to_str().unwrap();
+
+    if let (Some(fc), Some(lc)) = (value.chars().next(), value.chars().next_back()) {
+        if ['\'', '"'].contains(&fc) && fc == lc {
+            value = &value[1..value.chars().count() - 1];
+        };
+    }
+
+    config[section].insert(name, CString::from_str(value).unwrap());
+
+    return 1;
 }

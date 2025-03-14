@@ -19,16 +19,26 @@ fn main() {
     //
     // Linking libraries
     //
-    println!("cargo::rustc-link-lib=ircclient");
+    println!("cargo::rustc-link-lib=inih");
     //println!("cargo::rustc-link-search=/usr/lib");
 
     //
     // Binding C code
     //
     let bindings = bindgen::Builder::default()
+        .blocklist_type("__BindgenBitfieldUnit")
+        .blocklist_type("_IO_FILE")
+        .blocklist_type("_IO_marker")
+        .blocklist_type("_IO_codecvt")
+        .blocklist_type("_IO_wide_data")
+        .blocklist_type("_IO_lock_t")
+        .blocklist_type("__off_t")
+        .blocklist_type("__off64_t")
+        .blocklist_type("FILE")
         .use_core()
-        .headers(["/usr/include/libircclient/libircclient.h"])
-        .allowlist_item("irc_.*")
+        .header("include/include.h")
+        .allowlist_item("ini_.*")
+        .blocklist_function("ini_parse_file")
         .generate()
         .expect("Unable to generate bindings");
 
@@ -36,7 +46,7 @@ fn main() {
         .expect(&format!("Couldn't create directory: {out_path:?}"));
 
     let bindings_file =
-        PathBuf::from_iter([out_path.as_os_str(), OsStr::new("irc_bindings.rs")]);
+        PathBuf::from_iter([out_path.as_os_str(), OsStr::new("bindings.rs")]);
 
     bindings
         .write_to_file(&bindings_file)

@@ -2,10 +2,7 @@
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 
-include!(concat!(
-    env!("CARGO_MANIFEST_DIR"),
-    "/include/irc_bindings.rs"
-));
+include!(concat!(env!("CARGO_MANIFEST_DIR"), "/include/bindings.rs"));
 
 // Manual bind C function
 //

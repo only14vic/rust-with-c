@@ -9,5 +9,5 @@ mod no_std;
 
 pub mod prelude;
 pub mod logger;
-pub mod irc;
+pub mod cbind;
 pub mod foo;
