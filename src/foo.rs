@@ -10,8 +10,7 @@ use {
         ffi::{CStr, c_char, c_int, c_void},
         hash::BuildHasherDefault,
         mem::MaybeUninit,
-        ptr::{NonNull, null_mut},
-        str::FromStr
+        ptr::{NonNull, null_mut}
     },
     indexmap::IndexMap,
     libc::{
@@ -73,7 +72,7 @@ pub extern "C" fn foo_init() {
             panic!("Config file '{CONFIG_PATH}' could not be found.");
         }
 
-        let mut config: ConfigMap = Default::default();
+        let mut config = ConfigMap::default();
 
         if cbind::ini_parse(
             config_path.as_ptr().cast(),
@@ -86,9 +85,9 @@ pub extern "C" fn foo_init() {
 
         println!("Config: {config:#?}");
 
-        //let a = config[c"general"][c"boolean"]
-        //    .to_string_lossy()
-        //    .parse::<bool>();
+        // let a = config[c"general"][c"boolean"]
+        //     .to_string_lossy()
+        //     .parse::<bool>();
     };
 
     println!("JSON: {}", json!("Hello JSON!"));
@@ -225,7 +224,7 @@ unsafe extern "C" fn config_map_load(
         };
     }
 
-    config[section].insert(name, CString::from_str(value).unwrap());
+    config[section].insert(name, CString::new(value).unwrap());
 
     return 1;
 }
