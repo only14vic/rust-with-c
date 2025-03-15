@@ -207,7 +207,6 @@ unsafe extern "C" fn config_map_load(
     value: *const c_char
 ) -> c_int {
     let config: &mut ConfigMap = &mut *user.cast();
-
     let section = CStr::from_ptr(strdup(section));
     let name = CStr::from_ptr(strdup(name));
     let value = CStr::from_ptr(value);

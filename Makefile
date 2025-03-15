@@ -64,6 +64,7 @@ test-c-gdb:
 
 symbols:
 	nm -g $(args) \
+		bin/test_lib_c \
 		$(libpath)/app-nostd \
 		$(libpath)/libapp_nostd.so
 
