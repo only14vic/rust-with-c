@@ -40,13 +40,13 @@ pub extern "C" fn foo_init() {
 
     // Load config
     unsafe {
-        let exe_path: *mut c_char =
+        let mut buffer: *mut c_char =
             Box::into_raw(Box::new([0u8; PATH_MAX as usize])).cast();
-        if readlink(c"/proc/self/exe".as_ptr(), exe_path, PATH_MAX as usize - 1) < 0 {
+        if readlink(c"/proc/self/exe".as_ptr(), buffer, PATH_MAX as usize - 1) < 0 {
             panic!("Couln't get executable file path.");
         }
-        let exe_path = dirname(exe_path);
-        let exe_path = CString::from_raw(exe_path).into_string().unwrap();
+        buffer = dirname(buffer);
+        let exe_path = CString::from_raw(buffer).into_string().unwrap();
 
         let cwd = CString::from_raw(getcwd(null_mut(), 0))
             .into_string()
@@ -218,7 +218,7 @@ unsafe extern "C" fn config_map_load(
 
     let mut value = value.to_str().unwrap();
 
-    if let (Some(fc), Some(lc)) = (value.chars().next(), value.chars().next_back()) {
+    if let (Some(fc), Some(lc)) = (value.chars().next(), value.chars().last()) {
         if ['\'', '"'].contains(&fc) && fc == lc {
             value = &value[1..value.chars().count() - 1];
         };

@@ -55,7 +55,7 @@ test:
 test-c: prepare
 	gcc -std=gnu18 -Os -pthread $(args) -Wall -Wno-discarded-qualifiers \
 		-Wl,-z,relro,-z,now,-rpath='$$ORIGIN',-rpath='$$ORIGIN/lib',-rpath='$$ORIGIN/../lib',-rpath='$$ORIGIN/../$(libpath)' \
-		-L$(libpath) -lapp_nostd -ljson-c \
+		-L$(libpath) -lapp_nostd -ljson-c -linih \
 		-o bin/test_lib_c tests/test_lib.c
 	./bin/test_lib_c
 
