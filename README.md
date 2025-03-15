@@ -1,6 +1,6 @@
 ### Requirements
 
-- install `libircclient` with include files
+- install `libinih` with include files
 
 ### Usage
 
