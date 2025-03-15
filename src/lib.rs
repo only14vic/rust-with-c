@@ -1,6 +1,6 @@
-#![cfg_attr(feature = "no_std", no_std)]
+#![cfg_attr(not(feature = "std"), no_std)]
 
-#[cfg(not(feature = "no_std"))]
+#[cfg(feature = "std")]
 #[macro_use]
 extern crate std;
 extern crate alloc;

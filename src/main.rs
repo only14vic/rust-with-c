@@ -1,7 +1,9 @@
 #![no_main]
-#![cfg_attr(feature = "no_std", no_std)]
+#![cfg_attr(not(feature = "std"), no_std)]
 
 extern crate alloc;
+#[cfg(feature = "std")]
+extern crate std;
 
 use {
     alloc::string::String,
@@ -22,7 +24,13 @@ extern "C" fn main() -> i32 {
     log_init();
     foo_init();
 
-    let no_std = cfg!(feature = "no_std");
+    #[cfg(feature = "std")]
+    {
+        let v = std::fs::read_to_string(".env").unwrap();
+        println!("{v}");
+    }
+
+    let no_std = cfg!(not(feature = "std"));
     log::info!("no_std = {no_std}");
 
     println!("Hello, World!");

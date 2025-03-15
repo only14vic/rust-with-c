@@ -13,22 +13,22 @@ libpath = $(shell find target -type d -name debug|head -n1)
 rustc_sysroot = $(shell rustc --print=sysroot)
 rustc_target = $(shell rustc -vV|grep host:|cut -d' ' -f2)
 
-all: vars clean check run-std
-	$(make) clean test
-	$(make) clean run test-c
-	$(make) install
+all: vars clean check
+	$(make) clean run test
+	$(make) clean run-no-std test-c
+	$(make) install-no-std
 
 run:
 	cargo run $(args)
 
-run-std:
+run-no-std:
 	$(make) run args="--no-default-features $(args)"
 
 install: prepare
 	cargo install --force --no-track --path . $(args)
 	find target -path "*/release/lib*.so" -exec install -D {} lib/ \;
 
-install-std: prepare
+install-no-std: prepare
 	$(make) install args="--no-default-features $(args)"
 	install -D $(rustc_sysroot)/lib/rustlib/$(rustc_target)/lib/libstd*.so lib/
 
@@ -50,7 +50,7 @@ clean:
 
 test:
 	RUSTFLAGS="-Zpanic_abort_tests -Cpanic=unwind" \
-		cargo +nightly test --no-default-features $(args) -- --nocapture --color always
+		cargo +nightly test $(args) -- --nocapture --color always
 
 test-c: prepare
 	gcc -std=gnu18 -Os -pthread $(args) -Wall -Wno-discarded-qualifiers \
@@ -89,17 +89,17 @@ _git-pre-push: all
 help:
 	@echo -e "\
 	Usage guide:\n\n\
-	make all		- Build, run, test, check, install\n\
-	make install		- Install bins and libs without 'std'\n\
-	make install-std	- Install bins and libs with 'std'\n\
-	make run		- Compile and run without 'std'\n\
-	make run-std		- Compile and run with 'std'\n\
-	make check		- Check code\n\
-	make clean		- Clean target directory\n\
-	make vars		- Show used variables\n\
-	make env		- Show used env variables\n\
-	make test		- Test Rust code\n\
-	make test-c		- Compile and run test C code\n\
-	make show-symbols	- Show library symbols\n\
+	make all		- Build, run, test, check, install \n\
+	make install		- Install bins, libs with 'std' lib \n\
+	make install-no-std	- Install bins, libs without 'std' lib \n\
+	make run		- Compile and run with 'std' lib \n\
+	make run-no-std		- Compile and run without 'std' lib \n\
+	make check		- Check code \n\
+	make clean		- Clean target directory \n\
+	make vars		- Show used variables \n\
+	make env		- Show used env variables \n\
+	make test		- Test Rust code \n\
+	make test-c		- Compile and run test C code \n\
+	make show-symbols	- Show library symbols \n\
 	make show-symbols-dyn	- Show only dynamic library symbols\
 	"
