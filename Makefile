@@ -13,8 +13,8 @@ libpath = $(shell find target -type d -name debug|head -n1)
 rustc_sysroot = $(shell rustc --print=sysroot)
 rustc_target = $(shell rustc -vV|grep host:|cut -d' ' -f2)
 
-all: vars clean check
-	$(make) clean run test
+all: vars clean check run
+	$(make) clean test
 	$(make) clean run-no-std test-c
 	$(make) install-no-std
 
@@ -33,8 +33,8 @@ install-no-std: prepare
 	install -D $(rustc_sysroot)/lib/rustlib/$(rustc_target)/lib/libstd*.so lib/
 
 check:
-	cargo check
 	cargo check --no-default-features
+	cargo check
 	cargo clippy --no-deps
 	rustup run nightly rustfmt --check src/**
 
