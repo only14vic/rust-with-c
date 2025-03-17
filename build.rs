@@ -11,6 +11,7 @@ fn main() {
     //
     println!("cargo:rerun-if-changed=build.rs");
     println!("cargo:rerun-if-changed=src/lib.rs");
+    println!("cargo:rerun-if-changed=include/include.h");
     println!("cargo:rerun-if-changed=cbindgen.toml");
 
     let out_path =
@@ -20,7 +21,8 @@ fn main() {
     // Linking libraries
     //
     println!("cargo::rustc-link-lib=inih");
-    //println!("cargo::rustc-link-search=/usr/lib");
+    //println!("cargo::rustc-link-lib=app_nostd");
+    //println!("cargo::rustc-link-search=target/vim-local/debug");
 
     //
     // Binding C code

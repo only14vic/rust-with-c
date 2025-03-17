@@ -19,10 +19,16 @@ use {
     }
 };
 
+extern "Rust" {
+    fn example(a: String);
+}
+
 #[no_mangle]
 extern "C" fn main() -> i32 {
     log_init();
     foo_init();
+
+    unsafe { example("Rust".into()) };
 
     #[cfg(feature = "std")]
     {

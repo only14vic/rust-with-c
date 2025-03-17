@@ -27,11 +27,16 @@ use crate::prelude::*;
 #[no_mangle]
 pub static mut MUTEX: MaybeUninit<pthread_mutex_t> = MaybeUninit::zeroed();
 
-pub type ConfigMap<'a> = IndexMap<
-    &'a CStr,
-    IndexMap<&'a CStr, CString, BuildHasherDefault<AHasher>>,
+pub type ConfigMap = IndexMap<
+    Box<CStr>,
+    IndexMap<Box<CStr>, CString, BuildHasherDefault<AHasher>>,
     BuildHasherDefault<AHasher>
 >;
+
+#[no_mangle]
+extern "Rust" fn example(a: String) {
+    println!("ok: {a:?}");
+}
 
 #[no_mangle]
 pub extern "C" fn foo_init() {
@@ -212,7 +217,7 @@ unsafe extern "C" fn config_map_load(
     let value = CStr::from_ptr(value);
 
     if config.contains_key(section) == false {
-        config.insert(section, Default::default());
+        config.insert(section.into(), Default::default());
     }
 
     let mut value = value.to_str().unwrap();
@@ -223,7 +228,7 @@ unsafe extern "C" fn config_map_load(
         };
     }
 
-    config[section].insert(name, CString::new(value).unwrap());
+    config[section].insert(name.into(), CString::new(value).unwrap());
 
     return 1;
 }
