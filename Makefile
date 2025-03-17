@@ -27,10 +27,10 @@ run-no-std:
 install: prepare
 	cargo install --force --no-track --path . $(args)
 	find target -path "*/release/lib*.so" -exec install -D {} lib/ \;
+	install -D $(rustc_sysroot)/lib/rustlib/$(rustc_target)/lib/libstd*.so lib/
 
 install-no-std: prepare
 	$(make) install args="--no-default-features $(args)"
-	install -D $(rustc_sysroot)/lib/rustlib/$(rustc_target)/lib/libstd*.so lib/
 
 check:
 	cargo check --no-default-features
