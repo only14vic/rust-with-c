@@ -30,10 +30,20 @@ extern "C" fn main() -> i32 {
 
     unsafe { example("Rust".into()) };
 
+    #[cfg(not(feature = "std"))]
+    {
+        use alloc::vec;
+        let a = rustix::process::getcwd(vec![]);
+        println!("Rustix getcwd: {a:#?}");
+    }
+
     #[cfg(feature = "std")]
     {
-        let v = std::fs::read_to_string(".env").unwrap();
-        println!("{v}");
+        let _ = std::thread::spawn(|| {
+            let v = std::fs::read_to_string(".env").unwrap();
+            println!("{v}");
+        })
+        .join();
     }
 
     let no_std = cfg!(not(feature = "std"));

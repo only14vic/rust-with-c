@@ -87,6 +87,7 @@ dependencies = [
  "libc-print",
  "libc_alloc",
  "log",
+ "rustix",
  "serde",
  "serde_json",
 ]

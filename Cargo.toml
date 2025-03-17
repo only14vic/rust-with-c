@@ -67,6 +67,12 @@ libc = { version = "0.2", default-features = false, features = [
 ] }
 libc_alloc = { version = "1.0" }
 libc-print = { version = "0.1" }
+rustix = { version = "1", default-features = false, features = [
+  "use-libc",
+  "alloc",
+  "all-apis",
+  "linux_latest",
+] }
 log = { version = "0.4" }
 ahash = { version = "0.8", default-features = false }
 indexmap = { version = "2", default-features = false }
