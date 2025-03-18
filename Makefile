@@ -53,6 +53,7 @@ test:
 		cargo +nightly test $(args) -- --nocapture --color always
 
 test-c: prepare
+	# Strip debuginfo and symbols: -g -s
 	gcc -std=gnu18 -Os -pthread $(args) -Wall -Wno-discarded-qualifiers \
 		-Wl,-z,relro,-z,now,-rpath='$$ORIGIN',-rpath='$$ORIGIN/lib',-rpath='$$ORIGIN/../lib',-rpath='$$ORIGIN/../$(libpath)' \
 		-L$(libpath) -lapp_nostd -ljson-c -linih \
