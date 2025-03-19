@@ -19,7 +19,7 @@ rpath = true
 
 [profile.release]
 opt-level = "z"
-strip = "symbols"
+strip = "debuginfo"
 lto = "thin"
 panic = "abort"
 codegen-units = 1
