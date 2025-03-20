@@ -13,6 +13,7 @@ rustc-wrapper = "sccache"
 rustflags = [
   #"-Cprefer-dynamic",
   "-Ctarget-cpu=native",
+  "-Clink-arg=-fuse-ld=lld",
   "-Clink-args=-lc",
   "-Clink-args=-Wl,-rpath,$ORIGIN,-rpath,$ORIGIN/lib,-rpath,$ORIGIN/../lib",
   "-Cpanic=abort",
