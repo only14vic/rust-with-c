@@ -48,7 +48,7 @@ pub extern "C" fn foo_init() {
         let mut buffer: *mut c_char =
             Box::into_raw(Box::new([0u8; PATH_MAX as usize])).cast();
         if readlink(c"/proc/self/exe".as_ptr(), buffer, PATH_MAX as usize - 1) < 0 {
-            panic!("Couldn't get executable file path.");
+            panic!("Couldn't get executable file's path.");
         }
         buffer = dirname(buffer);
         let exe_path = CString::from_raw(buffer).into_string().unwrap();
