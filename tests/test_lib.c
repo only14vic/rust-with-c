@@ -21,8 +21,7 @@ int main() {
     char *last_ptr = NULL;
 
     for (int i = 0; i < 5; i++) {
-        // disable compiler optimization with "volatile"
-        volatile char *ptr = hello_lib(i);
+        char *ptr = hello_lib(i);
 
         if (ptr == NULL) {
             perror("Error: hello_lib returned NULL\n");
