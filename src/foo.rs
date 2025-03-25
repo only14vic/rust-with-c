@@ -223,7 +223,7 @@ unsafe extern "C" fn config_map_load(
     let mut value = value.to_str().unwrap();
 
     if let (Some(fc), Some(lc)) = (value.chars().next(), value.chars().last()) {
-        if ['\'', '\"'].contains(&fc) && fc == lc {
+        if ['\'', '\"'].contains(&fc) && fc == lc && value.chars().count() > 1 {
             value = &value[1..value.chars().count() - 1];
         };
     }
