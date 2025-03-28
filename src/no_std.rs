@@ -1,5 +1,3 @@
-#![cfg(not(feature = "std"))]
-
 use {
     core::panic::PanicInfo, libc::abort, libc_alloc::LibcAlloc, libc_print::std_name::*
 };

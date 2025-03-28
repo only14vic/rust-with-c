@@ -5,6 +5,7 @@
 extern crate std;
 extern crate alloc;
 
+#[cfg(not(feature = "std"))]
 mod no_std;
 
 pub mod prelude;

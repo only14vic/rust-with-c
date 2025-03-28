@@ -50,6 +50,10 @@ crate-type = ["cdylib", "lib"]
 path = "src/main.rs"
 name = "app-nostd"
 
+[[bin]]
+path = "src/main-micro.rs"
+name = "app-micro"
+
 [features]
 default = ["std"]
 std = []

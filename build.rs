@@ -1,6 +1,12 @@
 use {
     dotenv::dotenv,
-    std::{env, ffi::OsStr, fs::create_dir_all, path::PathBuf, process::Command}
+    std::{
+        env::{self},
+        ffi::OsStr,
+        fs::create_dir_all,
+        path::PathBuf,
+        process::Command
+    }
 };
 
 fn main() {
@@ -17,12 +23,18 @@ fn main() {
     let out_path =
         PathBuf::from_iter([&env::var("CARGO_MANIFEST_DIR").unwrap(), "include"]);
 
+    let target_dir = format!(
+        "{}/{}",
+        env::var("CARGO_TARGET_DIR").unwrap(),
+        env::var("PROFILE").unwrap()
+    );
+
     //
     // Linking libraries
     //
+    println!("cargo::rustc-link-search={target_dir}");
     println!("cargo::rustc-link-lib=inih");
     //println!("cargo::rustc-link-lib=app_nostd");
-    //println!("cargo::rustc-link-search=target/vim-local/debug");
 
     //
     // Binding C code
