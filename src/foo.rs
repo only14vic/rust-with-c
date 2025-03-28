@@ -163,6 +163,7 @@ pub extern "C" fn lib_foo_callback(a: i32) -> *mut c_char {
     unsafe { sprintf(buffer, c"Foo callback: a=%d".as_ptr(), a) };
 
     log::trace!("lib_foo_callback(): [{buffer:p}]");
+
     return buffer;
 }
 

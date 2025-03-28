@@ -54,7 +54,7 @@ test:
 
 test-c: prepare
 	# Strip debuginfo and symbols: -g -s
-	cc -std=gnu18 -Os -g -pipe -flto=2 -fno-fat-lto-objects -fuse-linker-plugin -fPIC -pthread $(args) -Wall -Wextra \
+	cc -std=gnu18 -Os -g -pipe -march=native -flto=2 -fno-fat-lto-objects -fuse-linker-plugin -fPIC -pthread $(args) -Wall -Wextra \
 		-Wl,-z,relro,-z,now,-rpath='$$ORIGIN',-rpath='$$ORIGIN/lib',-rpath='$$ORIGIN/../lib',-rpath='$$ORIGIN/../$(libpath)' \
 		-L$(libpath) -lapp_nostd -ljson-c -linih \
 		-o bin/test_lib_c tests/test_lib.c
