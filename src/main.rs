@@ -4,6 +4,7 @@
 extern crate alloc;
 #[cfg(feature = "std")]
 extern crate std;
+extern crate app_nostd;
 
 use {
     alloc::string::String,

@@ -1,11 +1,7 @@
 use {
     crate::cbind,
     ahash::AHasher,
-    alloc::{
-        boxed::Box,
-        ffi::CString,
-        string::{String, ToString}
-    },
+    alloc::{boxed::Box, ffi::CString, string::String},
     core::{
         ffi::{CStr, c_char, c_int, c_void},
         hash::BuildHasherDefault,
@@ -61,16 +57,16 @@ pub extern "C" fn foo_init() {
 
         const CONFIG_PATH: &str = "config/app.ini";
         let mut config_path = String::new();
-        let mut config_subdir = "/".to_string();
+        let mut config_dir = exe_path.clone();
         let mut config_exists = false;
 
-        for _ in 0..10 {
-            config_path = [&exe_path, &config_subdir, CONFIG_PATH].concat();
+        while config_dir.is_empty() == false {
+            config_path = [&config_dir, "/", CONFIG_PATH].concat();
             if access(config_path.as_ptr().cast(), F_OK) == 0 {
                 config_exists = true;
                 break;
             }
-            config_subdir.push_str("../");
+            config_dir.replace_range(config_dir.rfind('/').unwrap_or(0).., "");
         }
 
         if !config_exists {
