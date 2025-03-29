@@ -53,7 +53,7 @@ clean:
 			-type f -executable -delete
 
 test:
-	RUSTFLAGS="-Cpanic=unwind" cargo test $(args) -- --nocapture --color always
+	RUSTFLAGS="-Cpanic=unwind" cargo test --tests $(args) -- --nocapture --color always
 
 test-c: prepare
 	# Strip debuginfo and symbols: -g -s
