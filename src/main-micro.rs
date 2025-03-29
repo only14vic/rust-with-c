@@ -1,15 +1,19 @@
 #![no_main]
 #![no_std]
 
+#[cfg(not(feature = "std"))]
 include!("no_std.rs");
 
+#[cfg(feature = "std")]
+#[macro_use]
+extern crate std;
 extern crate alloc;
 
 use {alloc::string::String, libc::EXIT_SUCCESS};
 
 #[no_mangle]
 extern "C" fn main() -> i32 {
-    println!("Hello, World!");
+    println!("Hello, World! [no_std = {}]", cfg!(not(feature = "std")));
 
     unsafe {
         log_init();
@@ -22,7 +26,7 @@ extern "C" fn main() -> i32 {
 }
 
 #[link(name = "app_nostd")]
-unsafe extern "C" {
+extern "C" {
     fn foo_init();
     fn log_init();
 }
@@ -34,6 +38,6 @@ unsafe extern "C" {
 unsafe extern "C" {}
 */
 
-unsafe extern "Rust" {
+extern "Rust" {
     fn example(a: String);
 }

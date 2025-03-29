@@ -13,13 +13,17 @@ libpath = $(shell find target -type d -name debug|head -n1)
 rustc_sysroot = $(shell rustc --print=sysroot)
 rustc_target = $(shell rustc -vV|grep host:|cut -d' ' -f2)
 
-all: vars clean check run
-	$(make) clean test
-	$(make) clean run-no-std test-c
+all: vars clean check
+	$(make) run test
+	$(make) run-no-std test-c
 	$(make) install-no-std
 
-run:
-	cargo run $(args)
+build:
+	cargo build --lib $(args)
+
+run: build
+	cargo run --bin app-nostd $(args)
+	cargo run --bin app-micro $(args)
 
 run-no-std:
 	$(make) run args="--no-default-features $(args)"
@@ -49,8 +53,7 @@ clean:
 			-type f -executable -delete
 
 test:
-	RUSTFLAGS="-Zpanic_abort_tests -Cpanic=unwind" \
-		cargo +nightly test $(args) -- --nocapture --color always
+	RUSTFLAGS="-Cpanic=unwind" cargo test $(args) -- --nocapture --color always
 
 test-c: prepare
 	# Strip debuginfo and symbols: -g -s
@@ -93,6 +96,7 @@ help:
 	make all		- Build, run, test, check, install \n\
 	make install		- Install bins, libs with 'std' lib \n\
 	make install-no-std	- Install bins, libs without 'std' lib \n\
+	make build		- Building libraries \n\
 	make run		- Compile and run with 'std' lib \n\
 	make run-no-std		- Compile and run without 'std' lib \n\
 	make check		- Check code \n\
