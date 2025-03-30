@@ -20,12 +20,14 @@ rustflags = [
   "-Clink-args=-lclang",
   "-Clink-args=-Wl,-rpath,$ORIGIN,-rpath,$ORIGIN/lib,-rpath,$ORIGIN/../lib",
   "-Cpanic=abort",
+  # Set "unwind" if using stdlib
+  #"-Cpanic=unwind",
   "--verbose",
 ]
 
-# For dynamic linkage
+# Use it for stdlib
 #rustflags = [
-#  "-Cprefer-dynamic",
+#  #"-Cprefer-dynamic",
 #  "-Ctarget-cpu=native",
 #  "-Clinker-plugin-lto",
 #  "-Clink-arg=-fuse-ld=lld",

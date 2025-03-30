@@ -1,7 +1,9 @@
+#![allow(dead_code)]
+
 use {
     crate::cbind,
     ahash::AHasher,
-    alloc::{boxed::Box, ffi::CString, string::String},
+    alloc::{boxed::Box, ffi::CString, string::String, vec::Vec},
     core::{
         ffi::{CStr, c_char, c_int, c_void},
         hash::BuildHasherDefault,
@@ -14,6 +16,7 @@ use {
         pthread_mutex_lock, pthread_mutex_t, pthread_mutex_unlock, readlink, sched_yield,
         sprintf, strcpy, strdup, strlen, usleep
     },
+    serde::Deserialize,
     serde_json::json
 };
 
@@ -28,6 +31,40 @@ pub type ConfigMap = IndexMap<
     IndexMap<Box<CStr>, CString, BuildHasherDefault<AHasher>>,
     BuildHasherDefault<AHasher>
 >;
+
+#[derive(Debug, Deserialize)]
+pub struct Config {
+    version: f32,
+    general: ConfigGeneral
+}
+
+#[derive(Debug, Default, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ConfigEnum {
+    #[default]
+    Ru,
+    En
+}
+
+#[derive(Debug, Deserialize)]
+pub struct ConfigGeneral {
+    str: ConfigEnum,
+    number: u32,
+    boolean: bool,
+    list: Vec<u32>,
+    text: String,
+    #[serde(default)]
+    foo: ConfigFoo
+}
+
+#[derive(Debug, Default, Deserialize)]
+pub struct ConfigFoo {
+    str: ConfigEnum,
+    number: u32,
+    boolean: bool,
+    list: Vec<u32>,
+    text: String
+}
 
 #[no_mangle]
 extern "Rust" fn example(a: String) {
@@ -73,18 +110,25 @@ pub extern "C" fn foo_init() {
             panic!("Config file '{CONFIG_PATH}' could not be found.");
         }
 
-        let mut config = ConfigMap::default();
+        #[cfg(feature = "std")]
+        {
+            let mut config = configparser::ini::Ini::new();
+            config.load(&config_path).unwrap();
+            dbg!(config.get_map_ref());
+        }
+
+        let mut config_map = ConfigMap::default();
 
         if cbind::ini_parse(
             config_path.as_ptr().cast(),
             Some(config_map_load),
-            (&mut config as *mut ConfigMap).cast()
+            (&mut config_map as *mut ConfigMap).cast()
         ) != 0
         {
             panic!("Couldn't parse config file.");
         }
 
-        println!("Config: {config:#?}");
+        println!("Config: {config_map:#?}");
 
         // let a = config[c"general"][c"boolean"]
         //     .to_string_lossy()
@@ -150,6 +194,7 @@ pub extern "C" fn hello_lib_pthread(arg: *mut c_void) -> *mut c_void {
 
     unsafe { strcpy(arg.cast(), c"Data from Thread.".as_ptr()) };
 
+    //unsafe { pthread_exit(arg) };
     return arg;
 }
 

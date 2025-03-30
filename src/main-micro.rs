@@ -9,7 +9,10 @@ include!("no_std.rs");
 extern crate std;
 extern crate alloc;
 
-use {alloc::string::String, libc::EXIT_SUCCESS};
+use {
+    alloc::string::String,
+    libc::{EXIT_SUCCESS, getpid, malloc_stats}
+};
 
 #[no_mangle]
 extern "C" fn main() -> i32 {
@@ -21,6 +24,14 @@ extern "C" fn main() -> i32 {
 
         example("Hello!".into());
     };
+
+    unsafe {
+        malloc_stats();
+        println!("PID: {}", getpid());
+    }
+
+    // Waits for key pressing
+    //unsafe { getchar() };
 
     EXIT_SUCCESS
 }

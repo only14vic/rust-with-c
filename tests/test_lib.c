@@ -12,6 +12,9 @@
 #include <json-c/json_object.h>
 #include "../include/libapp_nostd.h"
 
+#define SMALLEST_STACKSZ PTHREAD_STACK_MIN
+#define SMALL_STACK (24 * 1024)
+
 void foo(foo_callback callback, int a);
 
 int main() {
@@ -41,8 +44,11 @@ int main() {
     char *value = (char *)malloc(100 * sizeof(char));
     strcpy(value, "Data from Main.");
 
+    pthread_attr_t attr;
+    pthread_attr_init(&attr);
+    pthread_attr_setstacksize(&attr, SMALL_STACK);
     pthread_t thread;
-    pthread_create(&thread, NULL, &hello_lib_pthread, value);
+    pthread_create(&thread, &attr, &hello_lib_pthread, value);
 
     for (int i = 0; i < 5; i++) {
         pthread_mutex_lock(&MUTEX);
@@ -54,6 +60,7 @@ int main() {
     }
 
     pthread_join(thread, (void **)&value);
+    pthread_attr_destroy(&attr);
 
     printf("Thread value: %s\n", value);
     free(value);
@@ -81,6 +88,8 @@ int main() {
     foo_drop(foo);
 
     malloc_stats();
+
+    printf("PID: %d \n", getpid());
 
     // Waits for key pressing
     // getchar();
