@@ -45,7 +45,7 @@ check:
 
 prepare:
 	mkdir -p bin lib vendor
-	git submodule update --init --recursive
+	git submodule update --init --force --checkout --recursive
 
 clean:
 	find ./target ./bin ./lib ./vendor \
