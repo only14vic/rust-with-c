@@ -19,7 +19,7 @@ all: vars clean prepare
 	$(make) run-no-std test-c
 	$(make) install-no-std
 
-build:
+build: prepare
 	cargo build --lib $(args)
 
 run: build
@@ -34,7 +34,7 @@ install: prepare
 	find target -path "*/release/lib*.so" -exec install -D {} lib/ \;
 	install -D $(rustc_sysroot)/lib/rustlib/$(rustc_target)/lib/libstd*.so lib/
 
-install-no-std: prepare
+install-no-std:
 	$(make) install args="--no-default-features $(args)"
 
 check:
