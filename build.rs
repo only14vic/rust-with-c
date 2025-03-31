@@ -20,8 +20,8 @@ fn main() {
     println!("cargo:rerun-if-changed=include/include.h");
     println!("cargo:rerun-if-changed=cbindgen.toml");
 
-    let out_path =
-        PathBuf::from_iter([&env::var("CARGO_MANIFEST_DIR").unwrap(), "include"]);
+    let src_path = env::var("CARGO_MANIFEST_DIR").unwrap();
+    let out_path = PathBuf::from_iter([&src_path, "include"]);
 
     let target_dir = format!(
         "{}/{}",
@@ -33,12 +33,30 @@ fn main() {
     // Linking libraries
     //
     println!("cargo::rustc-link-search={target_dir}");
-    println!("cargo::rustc-link-lib=inih");
+    //println!("cargo::rustc-link-lib=inih");
     //println!("cargo::rustc-link-lib=app_nostd");
 
     //
     // Binding C code
     //
+    let builder = cc::Build::new()
+        //.shared_flag(true)
+        //.static_flag(true)
+        .no_default_flags(false)
+        .inherit_rustflags(false)
+        .cargo_debug(false)
+        .cargo_output(true)
+        .out_dir(&target_dir)
+        .clone();
+
+    builder.clone()
+        .file(src_path + "/vendor/inih/ini.c")
+        .define("INI_USE_STACK", "1")
+        .define("INI_MAX_LINE", "1000")
+        .shared_flag(true)
+        //.static_flag(true)
+        .compile("inih");
+
     let bindings = bindgen::Builder::default()
         .blocklist_type("__BindgenBitfieldUnit")
         .blocklist_type("_IO_FILE")
@@ -50,7 +68,7 @@ fn main() {
         .blocklist_type("__off64_t")
         .blocklist_type("FILE")
         .use_core()
-        .header("include/include.h")
+        .header("vendor/inih/ini.h")
         .allowlist_item("ini_.*")
         .blocklist_function("ini_parse_file")
         .generate()

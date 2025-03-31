@@ -59,9 +59,9 @@ default = ["std"]
 std = ["dep:configparser"]
 
 [build-dependencies]
-cc = "1.2"
-bindgen = "0"
-cbindgen = "0"
+cc = { version = "1.2" }
+bindgen = { version = "0.71" }
+cbindgen = { version = "0.28" }
 log = { version = "0.4" }
 dotenv = { version = "0.15" }
 
@@ -71,7 +71,7 @@ libc = { version = "0.2", default-features = false, features = [
 ] }
 libc_alloc = { version = "1.0" }
 libc-print = { version = "0.1" }
-configparser = { version = "3.1", optional = true }
+configparser = { version = "3.1", features = ["indexmap"], optional = true }
 rustix = { version = "1", default-features = false, features = [
   "use-libc",
   "alloc",

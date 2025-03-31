@@ -13,7 +13,7 @@ libpath = $(shell find target -type d -name debug|head -n1)
 rustc_sysroot = $(shell rustc --print=sysroot)
 rustc_target = $(shell rustc -vV|grep host:|cut -d' ' -f2)
 
-all: vars clean check
+all: vars clean prepare check
 	$(make) run test
 	$(make) run-no-std test-c
 	$(make) install-no-std
@@ -43,13 +43,15 @@ check:
 	rustup run nightly rustfmt --check src/**
 
 prepare:
-	mkdir -p bin lib
+	mkdir -p bin lib vendor
+	git submodule update --init --recursive
 
 clean:
-	find ./target ./bin ./lib \
+	find ./target ./bin ./lib ./vendor \
 		   -path "./bin/*" -delete \
 		-o -path "./lib/*" -delete \
 		-o -path "./target/*" -a -name "*app*" \
+		-o -path "./vendor/*" -delete \
 			-type f -executable -delete
 
 test:
@@ -57,9 +59,10 @@ test:
 
 test-c: prepare
 	# Strip debuginfo and symbols: -g -s
-	cc -std=gnu18 -Os -g -pipe -march=native -flto=2 -fno-fat-lto-objects -fuse-linker-plugin -fPIC -pthread $(args) -Wall -Wextra \
+	cc -std=gnu18 -Os -g -pipe -march=native -flto=2 -fno-fat-lto-objects -fuse-linker-plugin \
+		-fPIC -pthread $(args) -Wall -Wextra \
 		-Wl,-z,relro,-z,now,-rpath='$$ORIGIN',-rpath='$$ORIGIN/lib',-rpath='$$ORIGIN/../lib',-rpath='$$ORIGIN/../$(libpath)' \
-		-L$(libpath) -lapp_nostd -ljson-c -linih \
+		-L$(libpath) -lapp_nostd -ljson-c \
 		-o bin/test_lib_c tests/test_lib.c
 	./bin/test_lib_c
 

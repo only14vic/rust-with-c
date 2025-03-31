@@ -1,6 +1,6 @@
-### Requirements
+### Vendors
 
-- install `libinih` with include files
+- This crate used `libinih`
 
 ### Usage
 
