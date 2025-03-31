@@ -13,7 +13,8 @@ libpath = $(shell find target -type d -name debug|head -n1)
 rustc_sysroot = $(shell rustc --print=sysroot)
 rustc_target = $(shell rustc -vV|grep host:|cut -d' ' -f2)
 
-all: vars clean prepare check
+all: vars clean prepare
+	$(make) check
 	$(make) run test
 	$(make) run-no-std test-c
 	$(make) install-no-std
