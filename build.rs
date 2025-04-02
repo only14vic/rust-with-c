@@ -17,7 +17,7 @@ fn main() {
     //
     println!("cargo:rerun-if-changed=build.rs");
     println!("cargo:rerun-if-changed=src/lib.rs");
-    println!("cargo:rerun-if-changed=include/include.h");
+    println!("cargo:rerun-if-changed=vendor/inih/ini.h");
     println!("cargo:rerun-if-changed=cbindgen.toml");
 
     let src_path = env::var("CARGO_MANIFEST_DIR").unwrap();
