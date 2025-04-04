@@ -1,6 +1,7 @@
 .idea
 .env
 .gdb_history
+perf.data*
 *.vim
 target
 bin

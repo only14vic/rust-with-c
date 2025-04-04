@@ -3,7 +3,7 @@
 use {
     crate::cbind,
     ahash::AHasher,
-    alloc::{boxed::Box, ffi::CString, string::String, vec::Vec},
+    alloc::{boxed::Box, ffi::CString, string::String},
     core::{
         ffi::{CStr, c_char, c_int, c_void},
         hash::BuildHasherDefault,
@@ -16,7 +16,6 @@ use {
         pthread_mutex_lock, pthread_mutex_t, pthread_mutex_unlock, readlink, sched_yield,
         sprintf, strcpy, strdup, strlen, usleep
     },
-    serde::Deserialize,
     serde_json::json
 };
 
@@ -31,40 +30,6 @@ pub type ConfigMap = IndexMap<
     IndexMap<Box<CStr>, CString, BuildHasherDefault<AHasher>>,
     BuildHasherDefault<AHasher>
 >;
-
-#[derive(Debug, Deserialize)]
-pub struct Config {
-    version: f32,
-    general: ConfigGeneral
-}
-
-#[derive(Debug, Default, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum ConfigEnum {
-    #[default]
-    Ru,
-    En
-}
-
-#[derive(Debug, Deserialize)]
-pub struct ConfigGeneral {
-    str: ConfigEnum,
-    number: u32,
-    boolean: bool,
-    list: Vec<u32>,
-    text: String,
-    #[serde(default)]
-    foo: ConfigFoo
-}
-
-#[derive(Debug, Default, Deserialize)]
-pub struct ConfigFoo {
-    str: ConfigEnum,
-    number: u32,
-    boolean: bool,
-    list: Vec<u32>,
-    text: String
-}
 
 #[no_mangle]
 extern "Rust" fn example(a: String) {

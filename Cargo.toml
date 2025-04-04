@@ -26,6 +26,16 @@ codegen-units = 1
 overflow-checks = true
 rpath = true
 
+[profile.dev.package."*"]
+opt-level = "z"
+debug = false
+strip = "symbols"
+
+[profile.release.package."*"]
+opt-level = "z"
+debug = false
+strip = "symbols"
+
 [lints.rust]
 async_fn_in_trait = "allow"
 hidden_glob_reexports = "allow"
