@@ -27,12 +27,10 @@ overflow-checks = true
 rpath = true
 
 [profile.dev.package."*"]
-opt-level = "z"
 debug = false
 strip = "symbols"
 
 [profile.release.package."*"]
-opt-level = "z"
 debug = false
 strip = "symbols"
 
